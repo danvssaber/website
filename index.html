@@ -141,15 +141,18 @@
         }
 
         .nav-logo {
-            font-family: var(--serif);
-            font-size: 1.7rem;
-            font-weight: 600;
-            color: var(--ink);
             text-decoration: none;
-            letter-spacing: 0.02em;
-            transition: color 0.3s;
+            display: flex;
+            align-items: center;
         }
-        .nav-logo:hover { color: var(--starry-blue-light); }
+        .nav-logo-img {
+            height: 44px;
+            width: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+        .nav-logo:hover .nav-logo-img { opacity: 0.8; }
 
         .nav-links {
             display: flex;
@@ -956,7 +959,7 @@
 <!-- ===== NAVIGATION ===== -->
 <nav id="mainNav">
     <div class="nav-inner">
-        <a href="#" class="nav-logo" onclick="showPage('home');return false;">Yiwei Li</a>
+        <a href="#" class="nav-logo" onclick="showPage('home');return false;"><img src="website/homepage_icon.jpg" alt="Home" class="nav-logo-img"></a>
         <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
             <span></span><span></span><span></span>
         </button>
