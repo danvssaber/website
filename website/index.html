@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Yiwei Li — Ph.D. Candidate in Accounting and Management at Harvard Business School">
+    <link rel="canonical" href="https://www.yiwei-li.com/">
+    <title>Yiwei Li</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== IMPRESSIONIST PALETTE =====
+           Monet: soft lavender, water-lily green, hazy blue, warm rose
+           Van Gogh: starry cobalt, cypress green, golden wheat, burnt sienna
+        */
+        :root {
+            /* Canvas & paper */
+            --canvas: #F6F1EA;
+            --canvas-warm: #F0E8DA;
+            --parchment: #FDFBF7;
+
+            /* Monet tones */
+            --lily-green: #7B9E87;
+            --lily-green-light: #A8C4B0;
+            --water-blue: #6E8FAD;
+            --water-blue-light: #9BB5CA;
+            --lavender: #8E7BA6;
+            --lavender-light: #B5A6C9;
+            --rose: #C4898A;
+            --rose-light: #D9B1B2;
+
+            /* Van Gogh tones */
+            --starry-blue: #2B4570;
+            --starry-blue-light: #4A6B8A;
+            --cypress: #3B5E47;
+            --wheat-gold: #D4A843;
+            --wheat-gold-light: #E4C57A;
+            --sienna: #B0703C;
+
+            /* Ink & text */
+            --ink: #2A2520;
+            --ink-light: #55504A;
+            --ink-lighter: #8A847C;
+
+            /* Shadows */
+            --shadow-soft: rgba(42, 37, 32, 0.07);
+            --shadow-deep: rgba(42, 37, 32, 0.14);
+
+            /* Type */
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --sans: 'Inter', -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--canvas);
+            color: var(--ink);
+            line-height: 1.7;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ===== PAINTERLY SVG FILTERS ===== */
+        .svg-filters { position: absolute; width: 0; height: 0; }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(246, 241, 234, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(142, 123, 166, 0.1);
+            transition: all 0.4s var(--transition);
+        }
+
+        nav.scrolled {
+            background: rgba(246, 241, 234, 0.96);
+            box-shadow: 0 4px 30px var(--shadow-soft);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .nav-logo {
+            font-family: var(--serif);
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.3s;
+        }
+        .nav-logo:hover { color: var(--starry-blue-light); }
+
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink-light);
+            font-size: 0.86rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 8px 18px;
+            border-radius: 8px;
+            transition: all 0.3s var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--starry-blue);
+            background: rgba(43, 69, 112, 0.06);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 2.5px;
+            background: linear-gradient(90deg, var(--lavender), var(--water-blue));
+            border-radius: 2px;
+        }
+
+        /* Mobile */
+        .mobile-toggle {
+            display: none;
+            background: none; border: none; cursor: pointer;
+            width: 32px; height: 24px; position: relative;
+        }
+        .mobile-toggle span {
+            display: block; width: 100%; height: 2px;
+            background: var(--ink); position: absolute; left: 0;
+            transition: all 0.3s var(--transition);
+        }
+        .mobile-toggle span:nth-child(1) { top: 0; }
+        .mobile-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+        .mobile-toggle span:nth-child(3) { bottom: 0; }
+        .mobile-toggle.open span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
+        .mobile-toggle.open span:nth-child(2) { opacity: 0; }
+        .mobile-toggle.open span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+
+        /* ===== PAGE SECTIONS ===== */
+        .page { display: none; min-height: calc(100vh - 72px); padding-top: 72px; }
+        .page.active { display: block; animation: fadeIn 0.6s var(--transition); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HERO — IMPRESSIONIST CANVAS ===== */
+        .hero {
+            position: relative;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--canvas);
+        }
+
+        /* Monet-style layered color washes */
+        .hero-wash {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-wash .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+
+        .hero-wash .blob:nth-child(1) {
+            width: 500px; height: 500px;
+            background: var(--lavender-light);
+            top: -10%; left: -5%;
+            animation-delay: 0s;
+        }
+        .hero-wash .blob:nth-child(2) {
+            width: 600px; height: 400px;
+            background: var(--water-blue-light);
+            top: 30%; right: -10%;
+            animation-delay: -5s;
+            animation-duration: 25s;
+        }
+        .hero-wash .blob:nth-child(3) {
+            width: 400px; height: 350px;
+            background: var(--lily-green-light);
+            bottom: -5%; left: 20%;
+            animation-delay: -10s;
+            animation-duration: 22s;
+        }
+        .hero-wash .blob:nth-child(4) {
+            width: 300px; height: 300px;
+            background: var(--rose-light);
+            top: 10%; right: 30%;
+            animation-delay: -7s;
+            opacity: 0.2;
+        }
+        .hero-wash .blob:nth-child(5) {
+            width: 350px; height: 250px;
+            background: var(--wheat-gold-light);
+            bottom: 15%; right: 5%;
+            animation-delay: -12s;
+            opacity: 0.18;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -20px) scale(1.05); }
+            66% { transform: translate(-20px, 15px) scale(0.95); }
+            100% { transform: translate(15px, -10px) scale(1.02); }
+        }
+
+        /* Subtle canvas texture overlay */
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 70px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Profile photo — painterly frame */
+        .profile-frame {
+            position: relative;
+        }
+
+        /* Impressionist brushstroke border */
+        .profile-frame::before {
+            content: '';
+            position: absolute;
+            top: -12px; left: -12px; right: 12px; bottom: 12px;
+            border: 2px solid transparent;
+            border-image: linear-gradient(
+                135deg,
+                var(--lavender) 0%,
+                var(--water-blue) 30%,
+                var(--lily-green) 60%,
+                var(--wheat-gold) 100%
+            ) 1;
+            border-radius: 0;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        /* Second offset frame — gallery style */
+        .profile-frame::after {
+            content: '';
+            position: absolute;
+            top: -6px; left: -6px; right: 6px; bottom: 6px;
+            border: 1px solid rgba(142, 123, 166, 0.2);
+            z-index: 0;
+        }
+
+        .profile-img {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 4px;
+            position: relative;
+            z-index: 1;
+            box-shadow:
+                0 20px 60px rgba(43, 69, 112, 0.12),
+                0 8px 24px var(--shadow-soft);
+            transition: transform 0.6s var(--transition), box-shadow 0.6s var(--transition);
+        }
+
+        .profile-img:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 28px 70px rgba(43, 69, 112, 0.16),
+                0 12px 30px var(--shadow-deep);
+        }
+
+        .profile-placeholder {
+            width: 100%;
+            aspect-ratio: 4/5;
+            border-radius: 4px;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(145deg, var(--canvas-warm), #E0D5C6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px var(--shadow-soft);
+        }
+
+        .profile-placeholder span {
+            font-family: var(--serif);
+            font-size: 5rem;
+            font-weight: 600;
+            color: var(--lavender);
+            opacity: 0.5;
+        }
+
+        /* Hero text */
+        .hero-text h1 {
+            font-family: var(--serif);
+            font-size: 3.8rem;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.12;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .hero-text .subtitle {
+            font-family: var(--serif);
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--starry-blue-light);
+            margin-bottom: 28px;
+        }
+
+        .hero-text .affiliation {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-lighter);
+            margin-bottom: 24px;
+            padding-bottom: 6px;
+        }
+
+        /* Impressionist divider — gradient brushstroke */
+        .paint-divider {
+            width: 80px;
+            height: 3px;
+            border: none;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--lavender), var(--water-blue), var(--lily-green));
+            margin: 20px 0;
+            opacity: 0.7;
+        }
+
+        .hero-text .bio {
+            font-size: 1.02rem;
+            color: var(--ink-light);
+            line-height: 1.85;
+            max-width: 560px;
+        }
+        .hero-text .bio p { margin-bottom: 16px; }
+        .hero-text .bio p:last-child { margin-bottom: 0; }
+
+        .hero-text .fun-note {
+            font-style: italic;
+            color: var(--ink-lighter);
+            font-size: 0.95rem;
+        }
+
+        /* Contact strip */
+        .contact-strip {
+            margin-top: 32px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .contact-strip a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.86rem;
+            font-weight: 500;
+            color: var(--starry-blue);
+            padding: 10px 20px;
+            border: 1px solid rgba(43, 69, 112, 0.18);
+            border-radius: 8px;
+            transition: all 0.3s var(--transition);
+            background: rgba(253, 251, 247, 0.6);
+        }
+
+        .contact-strip a:hover {
+            background: var(--starry-blue);
+            color: var(--parchment);
+            border-color: var(--starry-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(43, 69, 112, 0.2);
+        }
+
+        .contact-strip a svg {
+            width: 16px; height: 16px; flex-shrink: 0;
+        }
+
+        /* ===== RESEARCH PAGE ===== */
+        .research-header {
+            text-align: center;
+            padding: 80px 40px 20px;
+            position: relative;
+        }
+
+        .research-header h2 {
+            font-family: var(--serif);
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .research-header .tagline {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--ink-lighter);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Decorative paint swatch under header */
+        .research-header::after {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--rose), var(--lavender), var(--water-blue), var(--lily-green));
+            margin: 20px auto 0;
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+
+        .research-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px 40px 80px;
+        }
+
+        /* Section labels — painterly */
+        .section-label {
+            font-family: var(--serif);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-top: 56px;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, var(--lavender-light), var(--water-blue-light), transparent) 1;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .section-label .count {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--ink-lighter);
+            font-weight: 400;
+        }
+
+        /* Paper card — gallery frame aesthetic */
+        .paper-card {
+            background: var(--parchment);
+            border-radius: 4px;
+            padding: 36px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
+            box-shadow:
+                0 2px 8px var(--shadow-soft),
+                0 8px 24px rgba(43, 69, 112, 0.04);
+            transition: all 0.4s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Left accent — watercolor-style gradient stripe */
+        .paper-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: linear-gradient(
+                180deg,
+                var(--water-blue-light) 0%,
+                var(--lavender-light) 50%,
+                var(--lily-green-light) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .paper-card:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 12px 40px var(--shadow-soft),
+                0 4px 16px rgba(43, 69, 112, 0.06);
+        }
+        .paper-card:hover::before { opacity: 1; }
+
+        /* JMP card — special treatment */
+        .paper-card.jmp {
+            border-color: rgba(43, 69, 112, 0.12);
+            background: linear-gradient(135deg, var(--parchment) 0%, rgba(43, 69, 112, 0.02) 100%);
+        }
+        .paper-card.jmp::before {
+            opacity: 1;
+            background: linear-gradient(180deg, var(--starry-blue), var(--starry-blue-light));
+        }
+
+        .paper-title {
+            font-family: var(--serif);
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .paper-authors {
+            font-size: 0.88rem;
+            color: var(--ink-lighter);
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+
+        .paper-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge.jmp {
+            background: var(--starry-blue);
+            color: var(--canvas);
+        }
+        .badge.rr {
+            background: rgba(110, 143, 173, 0.12);
+            color: var(--starry-blue-light);
+            border: 1px solid rgba(110, 143, 173, 0.25);
+        }
+        .badge.award {
+            background: rgba(212, 168, 67, 0.12);
+            color: var(--sienna);
+            border: 1px solid rgba(212, 168, 67, 0.25);
+        }
+        .badge.published {
+            background: rgba(59, 94, 71, 0.1);
+            color: var(--cypress);
+            border: 1px solid rgba(59, 94, 71, 0.2);
+        }
+        .badge.wip {
+            background: rgba(142, 123, 166, 0.1);
+            color: var(--lavender);
+            border: 1px solid rgba(142, 123, 166, 0.2);
+        }
+        .badge.prep {
+            background: rgba(196, 137, 138, 0.1);
+            color: var(--rose);
+            border: 1px solid rgba(196, 137, 138, 0.2);
+        }
+
+        .paper-details {
+            font-size: 0.88rem;
+            color: var(--ink-light);
+            line-height: 1.65;
+        }
+        .paper-details li {
+            margin-bottom: 4px;
+            list-style: none;
+            padding-left: 16px;
+            position: relative;
+        }
+        .paper-details li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 10px;
+            width: 6px; height: 2px;
+            background: linear-gradient(90deg, var(--lavender), var(--water-blue));
+            border-radius: 1px;
+        }
+
+        /* Abstract toggle */
+        .abstract-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--starry-blue-light);
+            cursor: pointer;
+            margin-top: 12px;
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-family: var(--sans);
+            transition: color 0.2s;
+        }
+        .abstract-toggle:hover { color: var(--starry-blue); }
+        .abstract-toggle svg {
+            width: 14px; height: 14px;
+            transition: transform 0.3s var(--transition);
+        }
+        .abstract-toggle.open svg { transform: rotate(180deg); }
+
+        .paper-abstract {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s var(--transition), opacity 0.4s;
+            opacity: 0;
+        }
+        .paper-abstract.open {
+            max-height: 600px;
+            opacity: 1;
+        }
+        .paper-abstract p {
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            line-height: 1.75;
+            margin-top: 12px;
+            padding: 16px 20px;
+            background: rgba(142, 123, 166, 0.04);
+            border-left: 3px solid;
+            border-image: linear-gradient(180deg, var(--lavender-light), var(--water-blue-light)) 1;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Paper figures */
+        .paper-figure {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .paper-figure img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 6px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            transition: transform 0.4s var(--transition);
+            cursor: pointer;
+        }
+        .paper-figure img:hover { transform: scale(1.02); }
+        .paper-figure .caption {
+            font-size: 0.78rem;
+            color: var(--ink-lighter);
+            font-style: italic;
+            margin-top: 8px;
+        }
+        .expand-hint {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            color: var(--ink-lighter);
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .paper-figure:hover .expand-hint { opacity: 1; }
+
+        /* Publication card */
+        .pub-card {
+            background: var(--parchment);
+            border-radius: 4px;
+            padding: 28px 36px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(59, 94, 71, 0.08);
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            transition: all 0.3s var(--transition);
+        }
+        .pub-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px var(--shadow-soft);
+        }
+
+        .pub-citation {
+            font-size: 0.95rem;
+            color: var(--ink-light);
+            line-height: 1.7;
+        }
+        .pub-citation .journal {
+            font-style: italic;
+            color: var(--ink);
+        }
+
+        /* ===== CV PAGE ===== */
+        .cv-page-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .cv-page-content h2 {
+            font-family: var(--serif);
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+
+        .cv-page-content .cv-subtitle {
+            font-family: var(--serif);
+            font-style: italic;
+            color: var(--ink-lighter);
+            margin-bottom: 40px;
+            font-size: 1.05rem;
+        }
+
+        .cv-embed-wrapper {
+            background: var(--parchment);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px var(--shadow-soft);
+            border: 1px solid rgba(142, 123, 166, 0.08);
+        }
+        .cv-embed-wrapper iframe {
+            width: 100%; height: 80vh; border: none;
+        }
+
+        .cv-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 28px;
+            padding: 14px 32px;
+            background: var(--starry-blue);
+            color: var(--canvas);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.92rem;
+            letter-spacing: 0.03em;
+            border-radius: 8px;
+            transition: all 0.3s var(--transition);
+            box-shadow: 0 4px 16px rgba(43, 69, 112, 0.2);
+        }
+        .cv-download-btn:hover {
+            background: var(--starry-blue-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(43, 69, 112, 0.3);
+        }
+        .cv-download-btn svg { width: 18px; height: 18px; }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--ink);
+            color: rgba(246, 241, 234, 0.45);
+            text-align: center;
+            padding: 40px;
+            font-size: 0.82rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Footer paint wash */
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                var(--lavender) 0%,
+                var(--water-blue) 25%,
+                var(--lily-green) 50%,
+                var(--wheat-gold) 75%,
+                var(--rose) 100%
+            );
+            opacity: 0.6;
+        }
+
+        footer a {
+            color: var(--wheat-gold-light);
+            text-decoration: none;
+        }
+        footer .footer-name {
+            font-family: var(--serif);
+            font-size: 1.2rem;
+            color: rgba(246, 241, 234, 0.65);
+            margin-bottom: 6px;
+        }
+        footer .footer-quote {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 0.88rem;
+            color: rgba(246, 241, 234, 0.3);
+            margin-top: 12px;
+        }
+
+        /* ===== LIGHTBOX ===== */
+        .lightbox {
+            display: none;
+            position: fixed; inset: 0;
+            z-index: 9999;
+            background: rgba(42, 37, 32, 0.92);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s;
+        }
+        .lightbox.show { display: flex; }
+        .lightbox img {
+            max-width: 90vw; max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s var(--transition), transform 0.7s var(--transition);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal:nth-child(2) { transition-delay: 0.08s; }
+        .reveal:nth-child(3) { transition-delay: 0.16s; }
+        .reveal:nth-child(4) { transition-delay: 0.24s; }
+        .reveal:nth-child(5) { transition-delay: 0.32s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 60px 28px;
+                text-align: center;
+            }
+            .profile-frame { max-width: 260px; margin: 0 auto; }
+            .hero-text h1 { font-size: 2.8rem; }
+            .hero-text .bio { max-width: 100%; }
+            .contact-strip { justify-content: center; }
+            .research-container { padding: 20px 24px 60px; }
+            .paper-card { padding: 28px; }
+            .cv-page-content { padding: 60px 24px; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-inner { padding: 0 20px; }
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 72px; left: 0; right: 0; bottom: 0;
+                background: rgba(246, 241, 234, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { font-size: 1.1rem; padding: 12px 28px; }
+            .mobile-toggle { display: block; }
+            .hero-text h1 { font-size: 2.3rem; }
+            .hero-inner { padding: 36px 20px; }
+            .research-header h2 { font-size: 2.1rem; }
+            .section-label { font-size: 1.4rem; }
+            .paper-title { font-size: 1.15rem; }
+            .hero-wash .blob { filter: blur(60px); opacity: 0.25; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav id="mainNav">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo" onclick="showPage('home');return false;">Yiwei Li</a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" data-page="home" class="active" onclick="showPage('home');return false;">Home</a></li>
+            <li><a href="#" data-page="research" onclick="showPage('research');return false;">Research</a></li>
+            <li><a href="#" data-page="cv" onclick="showPage('cv');return false;">CV</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+    <section class="hero">
+        <!-- Monet-style color wash background -->
+        <div class="hero-wash">
+            <div class="blob"></div>
+            <div class="blob"></div>
+            <div class="blob"></div>
+            <div class="blob"></div>
+            <div class="blob"></div>
+        </div>
+
+        <div class="hero-inner">
+            <div class="profile-frame">
+                <img src="profile.png" alt="Yiwei Li" class="profile-img"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="profile-placeholder" style="display:none;">
+                    <span>YL</span>
+                </div>
+            </div>
+
+            <div class="hero-text">
+                <div class="affiliation">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 4 3 6 3s6-2 6-3v-5"/></svg>
+                    Harvard Business School
+                </div>
+                <h1>Yiwei Li</h1>
+                <p class="subtitle">Ph.D. Candidate in Accounting &amp; Management</p>
+                <hr class="paint-divider">
+                <div class="bio">
+                    <p>I study how the interplay between employee mobility of internal labor markets and management control systems shapes individual and team performance. I am also interested in how to effectively present information to facilitate decision making.</p>
+                    <p>I use a wide set of research methods including field experiments, surveys, and archival analyses both within a firm and in broad-sample settings. My job market paper examines whether internal mobility enhances the match quality between employees and jobs.</p>
+                    <p class="fun-note">Sports junkie, full stop. Padel, basketball, soccer — whatever's happening, I want in. Same energy with food but picky.</p>
+                </div>
+
+                <div class="contact-strip">
+                    <a href="mailto:yiwli@hbs.edu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        yiwli@hbs.edu
+                    </a>
+                    <a href="#" onclick="showPage('cv');return false;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+                        Curriculum Vitae
+                    </a>
+                    <a href="https://www.linkedin.com/in/yiwei-li-936b7270/" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ===== RESEARCH PAGE ===== -->
+<div id="page-research" class="page">
+    <div class="research-header">
+        <h2>Research</h2>
+        <p class="tagline">Internal labor markets, management control, and information design</p>
+    </div>
+
+    <div class="research-container">
+
+        <!-- WORKING PAPERS -->
+        <div class="section-label">
+            Working Papers <span class="count">// 05</span>
+        </div>
+
+        <!-- Paper 1: JMP -->
+        <div class="paper-card jmp reveal">
+            <h3 class="paper-title">Lateral Moves and Employee-Job Match Quality: Evidence from the Field</h3>
+            <p class="paper-authors">Solo-authored</p>
+            <ul class="paper-details">
+                <li>Committee: Tatiana Sandino (Chair), Dennis Campbell, Susanna Gallani</li>
+                <li>Accepted at the 2026 Ray Ball <em>Journal of Accounting Research</em> Conference</li>
+                <li>Management Accounting Section 2026 Midyear Meeting Best Paper Award</li>
+            </ul>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>This study examines voluntary, employee-initiated lateral moves as a mechanism for improving employee-job match quality. Using 11-year personnel data from an S&amp;P 500 company, I find that employees undertaking such moves are associated with significantly higher long-term promotion rates, lower turnover, and improved performance ratings compared to matched employees who remain in their roles. Conversely, involuntary, firm-dictated lateral moves fail to generate these benefits, suggesting that voluntary moves enable employees and local managers to exploit private information for optimal job matching. The benefits of voluntary moves are particularly pronounced for employees facing high information asymmetry with their jobs, limited promotion opportunities, or substantial changes in job contents. However, lateral moves entail short-term transition costs, including temporary performance declines, reduced role clarity, and potential misfit with the new job. This research contributes to the accounting and economics literature by highlighting a dynamic, post-hire mechanism for improving employee-job match quality. The findings demonstrate the strategic value of lateral mobility in workforce optimization, particularly relevant for flat organizational structures and periods of hiring constraints when firms must maximize the productivity of existing employees rather than rely on external recruitment.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="lateral_promotion.png" alt="Promotion probability by move type" onclick="openLightbox(this)">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+        <!-- Paper 2: El Salvador -->
+        <div class="paper-card reveal">
+            <h3 class="paper-title">Nudging Social Responsibility through Textual and Visual Information on Private and Social Benefits: A Field Experiment in El Salvador</h3>
+            <p class="paper-authors">with Henry C. Eyring and Patrick Ferguson</p>
+            <ul class="paper-details">
+                <li>R&amp;R at <em>Journal of Accounting Research</em></li>
+                <li>Accepted at the 2024 <em>JAR</em> Registered Reports Conference; In-principle acceptance</li>
+            </ul>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>A growing literature in accounting and economics explores information provision as a driver of behaviors that benefit society. We present a Registration-based Editorial Process (REP) proposal of a field experiment in a public health setting to examine whether the provision of information on private benefits, social benefits, or both best motivates prosocial behavior. Although information on private and social benefits can each influence social responsibility, theories of limited attention and information processing suggest that providing both types of information together may not be best. In light of accounting research on the use of images to alleviate information processing constraints, we also examine whether images moderate the effect of our textual information interventions. Our REP proposal is a randomized controlled trial in collaboration with the government of El Salvador to prompt vaccination uptake. The empirical design extends the accounting literature on the role of information content and formatting to increase prosocial behavior.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="salvador.png" alt="Experimental design — treatment arms" onclick="openLightbox(this)">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+        <!-- Paper 3: CFT -->
+        <div class="paper-card reveal">
+            <h3 class="paper-title">The Performance Trade-Offs of Joining Cross-Functional Teams: Evidence from the Field</h3>
+            <p class="paper-authors">Solo-authored</p>
+            <ul class="paper-details">
+                <li>R&amp;R at <em>The Accounting Review</em></li>
+            </ul>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>This study examines how participation in temporary cross-functional teams affects employees' performance in their primary departmental responsibilities. Employees in these teams juggle dual responsibilities that often conflict, balancing explicitly incentivized departmental tasks against implicitly rewarded team objectives. Using a staggered difference-in-differences design with field data from a large manufacturing firm, I find that employees' routine task performance significantly deteriorates during cross-functional team assignments. This performance decline is attenuated for employees with greater cognitive capacity and stronger career concerns, with performance gradually recovering as employees adapt. While individual employees make more mistakes during team participation, they are more likely to achieve higher professional and vocational certifications post-assignment. At the firm level, despite an increase in errors, the firm experiences greater operational efficiency and stability after implementing such teams. These findings extend multitasking theories and offer insights for organizations balancing innovation with effective performance management.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="CFT.png" alt="Cross-functional team structure" onclick="openLightbox(this)">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+        <!-- Paper 4: Choose to Know Less -->
+        <div class="paper-card reveal">
+            <h3 class="paper-title">The Choice to Know Less: A Field Experiment on User-Driven Customization of Performance Reports</h3>
+            <p class="paper-authors">with Henry C. Eyring</p>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>Recent empirical research has documented that overprovision of information harms performance. Yet, evidence on how to design performance reports in a way that accounts for the limited cognitive capacity of the user is still scant. Using a field experiment in online professional education, we test whether delegating decision rights over performance measures to report recipients improves their performance. Our analysis yields the following observations. First, recipients perform better when we restrict reports to a subset of information, rather than providing that same information in a more comprehensive report. Second, recipients granted decision rights over performance measures exhibit better performance than those without such rights. Third, when granted decision rights, recipients frequently select reports containing only a subset of available information&mdash;a choice that would be suboptimal from a Bayesian decision-maker's perspective despite all information being freely accessible. In addition, the positive effect of delegation is more pronounced among recipients who are more susceptible to information overload. These results suggest that recipients wield the choice over their report design in a manner that mitigates, rather than exacerbates, information overload. Our study offers initial evidence on the benefits of user-driven customization of performance reports.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="choose to know less.png" alt="Report customization — delegate to choose" onclick="openLightbox(this)">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+        <!-- Paper 5: Bonuses -->
+        <div class="paper-card reveal">
+            <h3 class="paper-title">When Bonuses Are Not Enough: A Field Experiment on Delegating Partner Selection Rights</h3>
+            <p class="paper-authors">with David Erkens and Yuhchang Hwang</p>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>In firms using high-powered commission schemes, the primary constraint on performance is often not effort, but operational friction and coordination bottlenecks. We investigate whether delegating partner selection rights serves as a more effective control mechanism than marginal increases in financial rewards in such settings. We conducted a large-scale field experiment at a home decoration firm involving 63 stores and 20,569 projects, where we randomly assigned stores to a Control group, a Bonus Only group, or a Bonus and Decision Rights group. We focus on customer referrals as our primary outcome because these high-value transactions depend critically on seamless dyadic coordination. We find that financial incentives alone fail to generate statistically significant gains in referral sales. In contrast, combining the incentive with decision rights generates a 42% relative increase. Mechanism tests reveal that delegation functions as a structural efficiency lever: agents use specific knowledge to sort into more compatible teams, thereby reducing project cycle times and increasing customer satisfaction. Finally, we document a &ldquo;state-contingent&rdquo; value to decentralization. The performance premium of decision rights is concentrated in periods of high operational load, precisely when the central allocator becomes a binding bottleneck. These findings demonstrate that in capacity-constrained environments, decision rights are a critical complement to financial incentives.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="home_furniture_treatment.png" alt="Treatment effect of delegating partner selection rights" onclick="openLightbox(this)">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+        <!-- PUBLICATIONS -->
+        <div class="section-label">
+            Publications <span class="count">// 01</span>
+        </div>
+
+        <div class="pub-card reveal">
+            <h3 class="paper-title">When Do Transnational Institutions Matter for Multinational Corporations' Location Choices?</h3>
+            <p class="paper-authors">with Christine M. Chan and Lei Shi</p>
+            <button class="abstract-toggle" onclick="toggleAbstract(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                Abstract
+            </button>
+            <div class="paper-abstract">
+                <p>This study investigates how international agreements (BITs and PTAs) influence where multinational corporations choose to invest. While previous research focused on domestic institutions, we examine how these international agreements interact with host country uncertainty, home country institutional weaknesses, and companies' existing international presence. Analyzing over 13,000 market entries by 1,129 multinational companies across 73 countries (2005&ndash;2017), we found these agreements significantly increase investment likelihood. This effect is stronger when host countries have uncertain institutions or when companies come from countries with weak formal institutions, but weaker for highly internationalized companies. Our findings enhance institutional theory by showing how international agreements interact with various institutional factors, providing practical insights for multinational managers and policymakers navigating complex global environments.</p>
+            </div>
+            <div class="paper-figure">
+                <img src="MNC_simple.png" alt="MNC market entry probability" onclick="openLightbox(this)" style="max-height: 220px;">
+                <p class="expand-hint">click to expand</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== CV PAGE ===== -->
+<div id="page-cv" class="page">
+    <div class="cv-page-content">
+        <h2>Curriculum Vitae</h2>
+        <p class="cv-subtitle">Last updated March 20, 2026</p>
+        <div class="cv-embed-wrapper">
+            <iframe src="CV_academic_0320.pdf" title="Yiwei Li — CV"></iframe>
+        </div>
+        <a href="CV_academic_0320.pdf" download class="cv-download-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+        </a>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p class="footer-name">Yiwei Li</p>
+    <p>Harvard Business School &middot; <a href="mailto:yiwli@hbs.edu">yiwli@hbs.edu</a></p>
+    <p class="footer-quote">&ldquo;I dream my painting, and I paint my dream.&rdquo; &mdash; Vincent van Gogh</p>
+</footer>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // --- Page Navigation ---
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + page).classList.add('active');
+        document.querySelectorAll('.nav-links a').forEach(a => {
+            a.classList.toggle('active', a.dataset.page === page);
+        });
+        document.getElementById('navLinks').classList.remove('open');
+        document.getElementById('mobileToggle').classList.remove('open');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(initReveal, 100);
+    }
+
+    // --- Mobile Menu ---
+    document.getElementById('mobileToggle').addEventListener('click', function() {
+        this.classList.toggle('open');
+        document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // --- Sticky Nav ---
+    window.addEventListener('scroll', () => {
+        document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // --- Scroll Reveal ---
+    function initReveal() {
+        const reveals = document.querySelectorAll('.page.active .reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => {
+            el.classList.remove('visible');
+            observer.observe(el);
+        });
+    }
+
+    // --- Abstract Toggle ---
+    function toggleAbstract(btn) {
+        btn.classList.toggle('open');
+        btn.nextElementSibling.classList.toggle('open');
+    }
+
+    // --- Lightbox ---
+    function openLightbox(img) {
+        document.getElementById('lightbox-img').src = img.src;
+        document.getElementById('lightbox').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // Init
+    initReveal();
+</script>
+
+</body>
+</html>
