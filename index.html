@@ -157,9 +157,9 @@
             align-items: center;
         }
         .nav-logo-img {
-            height: 52px;
-            width: 52px;
-            border-radius: 10px;
+            height: 60px;
+            width: 60px;
+            border-radius: 12px;
             object-fit: cover;
             transition: opacity 0.3s;
         }
@@ -1466,8 +1466,8 @@
             </div>
             <div class="viz-container" id="jmp-viz">
                 <div class="viz-tabs">
-                    <button class="viz-tab active" onclick="switchJmpTab('promotion')">Promotion</button>
-                    <button class="viz-tab" onclick="switchJmpTab('turnover')">Turnover</button>
+                    <button class="viz-tab" onclick="switchJmpTab('promotion')">Promotion</button>
+                    <button class="viz-tab active" onclick="switchJmpTab('turnover')">Turnover</button>
                     <button class="viz-tab" onclick="switchJmpTab('performance')">Performance</button>
                     <button class="viz-tab" onclick="switchJmpTab('survey')">Survey</button>
                 </div>
@@ -1757,7 +1757,7 @@
         }
     };
 
-    let currentJmpTab = 'promotion';
+    let currentJmpTab = 'turnover';
 
     function switchJmpTab(tab) {
         currentJmpTab = tab;
@@ -1772,43 +1772,76 @@
         svg.innerHTML = '';
 
         if (tab === 'survey') {
+            svg.setAttribute('viewBox', '0 0 580 320');
             drawBarChart(svg, d);
         } else {
+            svg.setAttribute('viewBox', '0 0 520 280');
             drawLineChart(svg, d);
         }
     }
 
+    // Compute nice round tick interval
+    function niceInterval(range) {
+        const rough = range / 5;
+        const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+        const norm = rough / mag;
+        let nice;
+        if (norm <= 1) nice = 1;
+        else if (norm <= 2) nice = 2;
+        else if (norm <= 5) nice = 5;
+        else nice = 10;
+        return nice * mag;
+    }
+
     function drawLineChart(svg, d) {
-        const W = 520, H = 280, pad = {t:40, r:30, b:50, l:60};
+        const W = 520, H = 280, pad = {t:40, r:30, b:50, l:65};
         const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
         const allVals = d.vol.concat(d.invol);
-        let minV = Math.min(...allVals), maxV = Math.max(...allVals);
-        const range = maxV - minV || 0.05;
-        minV -= range * 0.2; maxV += range * 0.25;
+        const dataMin = Math.min(...allVals), dataMax = Math.max(...allVals);
+
+        // Compute nice axis bounds
+        const interval = niceInterval(dataMax - dataMin);
+        let minV = Math.floor(dataMin / interval) * interval - interval;
+        let maxV = Math.ceil(dataMax / interval) * interval + interval;
+        // Ensure zero is included
+        if (minV > 0) minV = 0;
+        if (maxV < 0) maxV = 0;
+
+        const yScale = v => pad.t + ((maxV - v) / (maxV - minV)) * cH;
 
         // Title
         addText(svg, W/2, 18, d.title, 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
 
-        // Axes
+        // X-axis
         const xLabels = ['Year 1','Year 2','Year 3','Year 4'];
         xLabels.forEach((l, i) => {
             const x = pad.l + (i / 3) * cW;
-            addText(svg, x, H - 12, l, 'middle', '0.72rem', 'var(--ink-lighter)');
-            addLine(svg, x, pad.t, x, H - pad.b, 'rgba(0,0,0,0.05)');
+            addText(svg, x, H - 12, l, 'middle', '0.75rem', 'var(--ink-light)');
+            addLine(svg, x, pad.t, x, H - pad.b, 'rgba(0,0,0,0.04)');
         });
 
-        // Zero line
-        const zeroY = pad.t + ((maxV - 0) / (maxV - minV)) * cH;
-        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'rgba(0,0,0,0.12)', '2,4');
-        addText(svg, pad.l - 8, zeroY + 4, '0', 'end', '0.68rem', 'var(--ink-lighter)');
-
-        // Y-axis ticks
-        const ticks = 5;
-        for (let i = 0; i <= ticks; i++) {
-            const v = minV + (i / ticks) * (maxV - minV);
-            const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
-            if (Math.abs(v) > 0.001) addText(svg, pad.l - 8, y + 4, v.toFixed(3), 'end', '0.65rem', 'var(--ink-lighter)');
+        // Y-axis ticks at uniform intervals
+        for (let v = minV; v <= maxV + interval * 0.01; v += interval) {
+            const y = yScale(v);
+            const rounded = Math.round(v * 1000) / 1000;
+            const isZero = Math.abs(rounded) < 0.0001;
+            // Grid line
+            addLine(svg, pad.l, y, W - pad.r, y,
+                isZero ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.06)',
+                isZero ? '' : '');
+            // Label
+            const label = isZero ? '0' : rounded.toFixed(3);
+            addText(svg, pad.l - 10, y + 4, label, 'end', '0.68rem',
+                isZero ? 'var(--ink)' : 'var(--ink-lighter)', isZero ? 600 : 400);
         }
+
+        // Zero line extra emphasis
+        const zeroY = yScale(0);
+        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'var(--ink)', '');
+        // Make zero line thicker
+        const zLine = svg.lastChild;
+        zLine.setAttribute('stroke-width', '1.5');
+        zLine.setAttribute('opacity', '0.3');
 
         // Lines and dots
         ['vol','invol'].forEach(type => {
@@ -1817,7 +1850,7 @@
             const cls = type === 'vol' ? 'voluntary' : 'involuntary';
             const points = vals.map((v, i) => {
                 const x = pad.l + (i / 3) * cW;
-                const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
+                const y = yScale(v);
                 return { x, y, v, s: sig[i] };
             });
 
@@ -1826,7 +1859,7 @@
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', pathD);
             path.setAttribute('class', 'chart-line ' + cls);
-            const len = path.getTotalLength ? 800 : 800;
+            const len = 800;
             path.style.strokeDasharray = len;
             path.style.strokeDashoffset = len;
             path.style.transition = 'stroke-dashoffset 1.2s ease-out';
@@ -1847,8 +1880,10 @@
                     tooltip.textContent = `${p.v.toFixed(3)}${p.s}`;
                     tooltip.style.opacity = '1';
                     const rect = svg.getBoundingClientRect();
-                    tooltip.style.left = (p.x / 520 * rect.width - 20) + 'px';
-                    tooltip.style.top = (p.y / 280 * rect.height - 32) + 'px';
+                    const svgW = parseFloat(svg.getAttribute('viewBox').split(' ')[2]);
+                    const svgH = parseFloat(svg.getAttribute('viewBox').split(' ')[3]);
+                    tooltip.style.left = (p.x / svgW * rect.width - 20) + 'px';
+                    tooltip.style.top = (p.y / svgH * rect.height - 32) + 'px';
                 });
                 circle.addEventListener('mouseleave', () => {
                     document.getElementById('jmp-tooltip').style.opacity = '0';
@@ -1859,23 +1894,44 @@
     }
 
     function drawBarChart(svg, d) {
-        const W = 520, H = 280, pad = {t:40, r:10, b:70, l:45};
+        const W = 580, H = 320, pad = {t:40, r:15, b:95, l:50};
         const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
         const n = d.labels.length;
         const barW = cW / n;
         const allVals = d.vol.concat(d.invol);
-        let minV = Math.min(...allVals, 0), maxV = Math.max(...allVals, 0);
-        const range = maxV - minV || 0.1;
-        minV -= range * 0.1; maxV += range * 0.15;
+
+        // Nice axis bounds
+        const interval = niceInterval(Math.max(...allVals) - Math.min(...allVals));
+        let minV = Math.floor(Math.min(...allVals) / interval) * interval - interval * 0.5;
+        let maxV = Math.ceil(Math.max(...allVals) / interval) * interval + interval * 0.5;
+        if (minV > -0.05) minV = -0.20;
+        if (maxV < 0.05) maxV = 0.20;
+
+        const yScale = v => pad.t + ((maxV - v) / (maxV - minV)) * cH;
 
         addText(svg, W/2, 18, d.title, 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
 
-        const zeroY = pad.t + ((maxV - 0) / (maxV - minV)) * cH;
-        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'rgba(0,0,0,0.15)');
+        // Y-axis ticks
+        for (let v = minV; v <= maxV + interval * 0.01; v += interval) {
+            const y = yScale(v);
+            const rounded = Math.round(v * 1000) / 1000;
+            const isZero = Math.abs(rounded) < 0.0001;
+            addLine(svg, pad.l, y, W - pad.r, y,
+                isZero ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.06)');
+            const label = isZero ? '0' : rounded.toFixed(2);
+            addText(svg, pad.l - 8, y + 4, label, 'end', '0.65rem',
+                isZero ? 'var(--ink)' : 'var(--ink-lighter)', isZero ? 600 : 400);
+        }
+
+        // Zero line emphasis
+        const zeroY = yScale(0);
+        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'var(--ink)');
+        svg.lastChild.setAttribute('stroke-width', '1.5');
+        svg.lastChild.setAttribute('opacity', '0.3');
 
         d.labels.forEach((label, i) => {
             const cx = pad.l + (i + 0.5) * barW;
-            const bw = barW * 0.32;
+            const bw = barW * 0.3;
 
             // Voluntary bar
             const vH = Math.abs(d.vol[i]) / (maxV - minV) * cH;
@@ -1885,7 +1941,6 @@
             vRect.setAttribute('y', vY); vRect.setAttribute('height', vH);
             vRect.setAttribute('rx', 2);
             vRect.setAttribute('fill', 'var(--starry-blue)'); vRect.setAttribute('opacity', '0.85');
-            vRect.style.transition = 'height 0.6s, y 0.6s';
             svg.appendChild(vRect);
 
             // Involuntary bar
@@ -1898,7 +1953,7 @@
             iRect.setAttribute('fill', 'var(--sienna)'); iRect.setAttribute('opacity', '0.85');
             svg.appendChild(iRect);
 
-            // Hover areas
+            // Hover tooltips
             [d.vol[i], d.invol[i]].forEach((val, j) => {
                 const rect = j === 0 ? vRect : iRect;
                 const sig = j === 0 ? d.sigV[i] : d.sigI[i];
@@ -1908,19 +1963,25 @@
                     tooltip.textContent = `${val.toFixed(3)}${sig}`;
                     tooltip.style.opacity = '1';
                     const svgRect = svg.getBoundingClientRect();
-                    tooltip.style.left = (cx / 520 * svgRect.width - 20) + 'px';
-                    tooltip.style.top = ((j === 0 ? vY : iY) / 280 * svgRect.height - 28) + 'px';
+                    tooltip.style.left = (cx / W * svgRect.width - 20) + 'px';
+                    tooltip.style.top = ((j === 0 ? vY : iY) / H * svgRect.height - 28) + 'px';
                 });
                 rect.addEventListener('mouseleave', () => {
                     document.getElementById('jmp-tooltip').style.opacity = '0';
                 });
             });
 
-            // Labels
-            const lines = label.split('\n');
-            lines.forEach((line, li) => {
-                addText(svg, cx, H - pad.b + 14 + li * 11, line, 'middle', '0.58rem', 'var(--ink-lighter)');
-            });
+            // Tilted labels
+            const labelText = label.replace('\n', ' ');
+            const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            t.setAttribute('x', cx);
+            t.setAttribute('y', H - pad.b + 14);
+            t.setAttribute('text-anchor', 'end');
+            t.setAttribute('font-size', '0.62rem');
+            t.setAttribute('fill', 'var(--ink-lighter)');
+            t.setAttribute('transform', `rotate(-35, ${cx}, ${H - pad.b + 14})`);
+            t.textContent = labelText;
+            svg.appendChild(t);
         });
     }
 
@@ -2081,7 +2142,7 @@
 
     // ===== INIT ALL VISUALIZATIONS =====
     function initViz() {
-        drawJmpChart('promotion');
+        drawJmpChart('turnover');
         initExpDesign();
         initTeamViz();
         initBonusChart();
