@@ -119,15 +119,13 @@
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 1000;
-            background: rgba(246, 241, 234, 0.88);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            background: var(--canvas);
             border-bottom: 1px solid rgba(142, 123, 166, 0.1);
             transition: all 0.4s var(--transition);
         }
 
         nav.scrolled {
-            background: rgba(246, 241, 234, 0.96);
+            background: var(--canvas);
             box-shadow: 0 4px 30px var(--shadow-soft);
         }
 
@@ -285,6 +283,15 @@
             33% { transform: translate(20px, -14px) scale(1.03); }
             66% { transform: translate(-14px, 10px) scale(0.97); }
             100% { transform: translate(10px, -7px) scale(1.01); }
+        }
+
+        /* Wheatfield with Crows background wash */
+        .hero-painting {
+            position: absolute;
+            inset: 0;
+            background: url('website/wheatfield.jpg') center/cover no-repeat;
+            opacity: 0.1;
+            z-index: 0;
         }
 
         /* Subtle canvas texture overlay */
@@ -994,6 +1001,8 @@
 <!-- ===== HOME PAGE ===== -->
 <div id="page-home" class="page active">
     <section class="hero">
+        <!-- Van Gogh Wheatfield background wash -->
+        <div class="hero-painting"></div>
         <!-- Monet-style color wash background -->
         <div class="hero-wash">
             <div class="blob"></div>
