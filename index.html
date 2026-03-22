@@ -962,86 +962,130 @@
         }
         .exp-branch-line.visible { opacity: 1; }
 
-        /* Paper 3: Team formation */
+        /* Paper 3: Dual-role tension */
         .team-viz {
             margin-top: 20px;
-            padding: 24px;
+            padding: 28px 24px;
             background: var(--parchment);
             border-radius: 8px;
             border: 1px solid rgba(142, 123, 166, 0.08);
             position: relative;
-            min-height: 260px;
         }
-        .team-row {
+        .dual-role {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 0;
             flex-wrap: wrap;
         }
-        .dept-box {
-            padding: 12px 20px;
+        .role-side {
+            flex: 1;
+            min-width: 160px;
+            max-width: 200px;
+            padding: 16px;
             border-radius: 8px;
-            font-size: 0.82rem;
-            font-weight: 500;
             text-align: center;
-            transition: all 0.6s var(--transition);
-            border: 1px solid;
-        }
-        .dept-box.tech { background: rgba(110, 143, 173, 0.1); border-color: rgba(110, 143, 173, 0.25); color: var(--water-blue); }
-        .dept-box.craft { background: rgba(142, 123, 166, 0.1); border-color: rgba(142, 123, 166, 0.25); color: var(--lavender); }
-        .dept-box.mfg { background: rgba(123, 158, 135, 0.1); border-color: rgba(123, 158, 135, 0.25); color: var(--lily-green); }
-        .team-arrow {
-            font-size: 1.2rem;
-            color: var(--ink-lighter);
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: all 0.6s var(--transition);
         }
-        .team-arrow.visible { opacity: 1; }
-        .cft-box {
-            padding: 16px 28px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, rgba(43, 69, 112, 0.08), rgba(142, 123, 166, 0.08));
-            border: 2px dashed rgba(43, 69, 112, 0.2);
-            text-align: center;
+        .role-side.visible { opacity: 1; }
+        .role-side.home {
+            background: rgba(212, 168, 67, 0.08);
+            border: 1px solid rgba(212, 168, 67, 0.2);
+            transform: translateX(-20px);
+        }
+        .role-side.home.visible { transform: translateX(0); }
+        .role-side.cft {
+            background: rgba(43, 69, 112, 0.06);
+            border: 2px dashed rgba(43, 69, 112, 0.18);
+            transform: translateX(20px);
+        }
+        .role-side.cft.visible { transform: translateX(0); }
+        .role-title {
             font-family: var(--serif);
-            font-size: 1rem;
+            font-size: 0.92rem;
             font-weight: 600;
-            color: var(--starry-blue);
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.6s var(--transition);
+            margin-bottom: 8px;
         }
-        .cft-box.visible { opacity: 1; transform: scale(1); }
-        .incentive-labels {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 16px;
-        }
-        .incentive-label {
-            font-size: 0.78rem;
-            font-family: var(--serif);
+        .role-side.home .role-title { color: var(--sienna); }
+        .role-side.cft .role-title { color: var(--starry-blue); }
+        .role-incentive {
+            font-size: 0.72rem;
             font-style: italic;
-            padding: 6px 14px;
-            border-radius: 20px;
-            opacity: 0;
-            transition: all 0.5s;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 6px;
         }
-        .incentive-label.visible { opacity: 1; }
-        .incentive-label.explicit {
+        .role-side.home .role-incentive {
             background: rgba(212, 168, 67, 0.12);
             color: var(--sienna);
         }
-        .incentive-label.implicit {
-            background: rgba(43, 69, 112, 0.08);
+        .role-side.cft .role-incentive {
+            background: rgba(43, 69, 112, 0.1);
             color: var(--starry-blue);
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
+        .role-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 12px;
+            opacity: 0;
+            transition: opacity 0.6s;
         }
-        .incentive-label.pulse { animation: pulse 2s ease-in-out infinite; }
+        .role-center.visible { opacity: 1; }
+        .role-employee {
+            font-size: 2.2rem;
+            margin-bottom: 4px;
+        }
+        .role-pull {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+            color: var(--ink-lighter);
+        }
+        .pull-arrow {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .pull-arrow.visible { opacity: 1; }
+        @keyframes pullLeft {
+            0%, 100% { transform: translateX(0); opacity: 0.4; }
+            50% { transform: translateX(-4px); opacity: 1; }
+        }
+        @keyframes pullRight {
+            0%, 100% { transform: translateX(0); opacity: 0.4; }
+            50% { transform: translateX(4px); opacity: 1; }
+        }
+        .pull-arrow.left { animation: pullLeft 2s ease-in-out infinite; }
+        .pull-arrow.right { animation: pullRight 2s ease-in-out infinite; }
+        .role-outcome {
+            text-align: center;
+            margin-top: 16px;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .role-outcome.visible { opacity: 1; }
+        .outcome-question {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 0.88rem;
+            color: var(--ink-light);
+            margin-bottom: 8px;
+        }
+        .outcome-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: rgba(196, 137, 138, 0.1);
+            color: var(--rose);
+            border: 1px solid rgba(196, 137, 138, 0.2);
+        }
 
         /* Paper 4: Interactive report */
         .report-demo {
@@ -1543,20 +1587,32 @@
                 <p>This study examines how participation in temporary cross-functional teams affects employees' performance in their primary departmental responsibilities. Employees in these teams juggle dual responsibilities that often conflict, balancing explicitly incentivized departmental tasks against implicitly rewarded team objectives. Using a staggered difference-in-differences design with field data from a large manufacturing firm, I find that employees' routine task performance significantly deteriorates during cross-functional team assignments. This performance decline is attenuated for employees with greater cognitive capacity and stronger career concerns, with performance gradually recovering as employees adapt. While individual employees make more mistakes during team participation, they are more likely to achieve higher professional and vocational certifications post-assignment. At the firm level, despite an increase in errors, the firm experiences greater operational efficiency and stability after implementing such teams. These findings extend multitasking theories and offer insights for organizations balancing innovation with effective performance management.</p>
             </div>
             <div class="team-viz" id="team-viz">
-                <div class="team-row" style="margin-bottom:20px;">
-                    <div class="dept-box tech">🔧 Technology</div>
-                    <div class="dept-box craft">🎨 Crafts</div>
-                    <div class="dept-box mfg">🏭 Manufacturing</div>
+                <div class="dual-role">
+                    <div class="role-side home" id="role-home">
+                        <div class="role-title">Home Department</div>
+                        <div style="font-size:1.6rem;margin-bottom:4px;">🏢</div>
+                        <div style="font-size:0.78rem;color:var(--ink-light);">Routine tasks</div>
+                        <div class="role-incentive">Explicit Incentives</div>
+                        <div style="font-size:0.68rem;color:var(--ink-lighter);margin-top:4px;">KPIs &middot; Performance ratings</div>
+                    </div>
+                    <div class="role-center" id="role-center">
+                        <div class="role-pull">
+                            <span class="pull-arrow left" id="pull-left">◀</span>
+                            <span class="role-employee">👤</span>
+                            <span class="pull-arrow right" id="pull-right">▶</span>
+                        </div>
+                    </div>
+                    <div class="role-side cft" id="role-cft">
+                        <div class="role-title">Cross-Functional Team</div>
+                        <div style="font-size:1.6rem;margin-bottom:4px;">🔬</div>
+                        <div style="font-size:0.78rem;color:var(--ink-light);">Temporary &middot; Innovation</div>
+                        <div class="role-incentive">Implicit Incentives</div>
+                        <div style="font-size:0.68rem;color:var(--ink-lighter);margin-top:4px;">Career growth &middot; Learning</div>
+                    </div>
                 </div>
-                <div class="team-row" style="margin-bottom:16px;">
-                    <div class="team-arrow" id="team-arrows">↓ &nbsp; ↓ &nbsp; ↓</div>
-                </div>
-                <div class="team-row" style="margin-bottom:20px;">
-                    <div class="cft-box" id="cft-box">Cross-Functional Team<br><span style="font-family:var(--sans);font-size:0.78rem;font-weight:400;color:var(--ink-light);">for innovation</span></div>
-                </div>
-                <div class="incentive-labels">
-                    <div class="incentive-label explicit" id="label-explicit">Explicit Incentives<br><span style="font-size:0.7rem;">departmental KPIs</span></div>
-                    <div class="incentive-label implicit" id="label-implicit">Implicit Incentives<br><span style="font-size:0.7rem;">team innovation goals</span></div>
+                <div class="role-outcome" id="role-outcome">
+                    <div class="outcome-question">Work or shirk on the cross-functional project?</div>
+                    <div class="outcome-bar">📉 Routine task performance</div>
                 </div>
             </div>
         </div>
@@ -2025,17 +2081,19 @@
         if (el) obs.observe(el);
     }
 
-    // ===== PAPER 3: Team Formation Animation =====
+    // ===== PAPER 3: Dual-Role Tension Animation =====
     function initTeamViz() {
         const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) return;
-                setTimeout(() => document.getElementById('team-arrows').classList.add('visible'), 400);
-                setTimeout(() => document.getElementById('cft-box').classList.add('visible'), 800);
+                setTimeout(() => document.getElementById('role-home').classList.add('visible'), 200);
+                setTimeout(() => document.getElementById('role-center').classList.add('visible'), 600);
+                setTimeout(() => document.getElementById('role-cft').classList.add('visible'), 400);
                 setTimeout(() => {
-                    document.getElementById('label-explicit').classList.add('visible', 'pulse');
-                    document.getElementById('label-implicit').classList.add('visible', 'pulse');
-                }, 1200);
+                    document.getElementById('pull-left').classList.add('visible');
+                    document.getElementById('pull-right').classList.add('visible');
+                }, 1000);
+                setTimeout(() => document.getElementById('role-outcome').classList.add('visible'), 1400);
                 obs.unobserve(entry.target);
             });
         }, { threshold: 0.3 });
