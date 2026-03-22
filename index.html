@@ -59,9 +59,10 @@
         */
         :root {
             /* Canvas & paper */
-            --canvas: #F6F1EA;
-            --canvas-warm: #F0E8DA;
-            --parchment: #FDFBF7;
+            --canvas: #F2EBDA;
+            --canvas-cool: #EDE8DF;
+            --canvas-warm: #EDE3CF;
+            --parchment: #FAF6EE;
 
             /* Monet tones */
             --lily-green: #7B9E87;
@@ -103,12 +104,23 @@
 
         body {
             font-family: var(--sans);
-            background: var(--canvas);
+            background: linear-gradient(180deg, var(--canvas) 0%, var(--canvas-cool) 100%);
+            background-attachment: fixed;
             color: var(--ink);
             line-height: 1.7;
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+        }
+
+        /* Canvas texture across entire page */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* ===== PAINTERLY SVG FILTERS ===== */
@@ -224,7 +236,7 @@
             display: flex;
             align-items: center;
             overflow: hidden;
-            background: var(--canvas);
+            background: transparent;
         }
 
         /* Monet-style layered color washes */
