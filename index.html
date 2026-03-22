@@ -84,8 +84,8 @@
 
             /* Ink & text */
             --ink: #2A2520;
-            --ink-light: #55504A;
-            --ink-lighter: #8A847C;
+            --ink-light: #453F38;
+            --ink-lighter: #6E6860;
 
             /* Shadows */
             --shadow-soft: rgba(42, 37, 32, 0.07);
@@ -441,7 +441,7 @@
             color: var(--ink-light);
             line-height: 1.85;
             max-width: 560px;
-            text-align: justify;
+            text-align: left;
         }
         .hero-text .bio p { margin-bottom: 16px; }
         .hero-text .bio p:last-child { margin-bottom: 0; }
@@ -449,7 +449,12 @@
         .hero-text .fun-note {
             font-style: italic;
             color: var(--ink-lighter);
-            font-size: 0.95rem;
+            font-size: 0.93rem;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(142, 123, 166, 0.15);
+            padding-left: 16px;
+            border-left: 2px solid var(--wheat-gold-light);
         }
 
         /* Contact strip */
@@ -1750,16 +1755,35 @@
     });
 
     // --- Scroll Reveal ---
+    let revealObserver = null;
     function initReveal() {
+        // Disconnect any previous observer to prevent stacking
+        if (revealObserver) {
+            revealObserver.disconnect();
+            revealObserver = null;
+        }
         const reveals = document.querySelectorAll('.page.active .reveal');
-        const observer = new IntersectionObserver((entries) => {
+        revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
             });
         }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
         reveals.forEach(el => {
             el.classList.remove('visible');
-            observer.observe(el);
+            revealObserver.observe(el);
+        });
+        // Immediately reveal elements already in the viewport
+        requestAnimationFrame(() => {
+            reveals.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add('visible');
+                    revealObserver.unobserve(el);
+                }
+            });
         });
     }
 
