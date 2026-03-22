@@ -59,20 +59,20 @@
         */
         :root {
             /* Canvas & paper */
-            --canvas: #F2EBDA;
-            --canvas-cool: #EDE8DF;
-            --canvas-warm: #EDE3CF;
-            --parchment: #FAF6EE;
+            --canvas: #E8DCCA;
+            --canvas-cool: #E3D9CB;
+            --canvas-warm: #E2D4BF;
+            --parchment: #F0E8D8;
 
             /* Monet tones */
-            --lily-green: #7B9E87;
-            --lily-green-light: #A8C4B0;
-            --water-blue: #6E8FAD;
-            --water-blue-light: #9BB5CA;
-            --lavender: #8E7BA6;
-            --lavender-light: #B5A6C9;
-            --rose: #C4898A;
-            --rose-light: #D9B1B2;
+            --lily-green: #6B8E74;
+            --lily-green-light: #94B89E;
+            --water-blue: #5A7D9E;
+            --water-blue-light: #88AAC2;
+            --lavender: #7E6B96;
+            --lavender-light: #A693BD;
+            --rose: #B87A7B;
+            --rose-light: #CDA0A1;
 
             /* Van Gogh tones */
             --starry-blue: #2B4570;
@@ -118,7 +118,7 @@
             content: '';
             position: fixed;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
             pointer-events: none;
             z-index: 0;
         }
@@ -250,44 +250,44 @@
         .hero-wash .blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.2;
+            filter: blur(90px);
+            opacity: 0.28;
             animation: drift 30s ease-in-out infinite alternate;
         }
 
         .hero-wash .blob:nth-child(1) {
             width: 420px; height: 420px;
-            background: var(--lavender-light);
+            background: var(--lavender);
             top: -10%; left: -5%;
             animation-delay: 0s;
         }
         .hero-wash .blob:nth-child(2) {
             width: 500px; height: 350px;
-            background: var(--water-blue-light);
+            background: var(--water-blue);
             top: 30%; right: -10%;
             animation-delay: -5s;
             animation-duration: 35s;
         }
         .hero-wash .blob:nth-child(3) {
             width: 350px; height: 300px;
-            background: var(--lily-green-light);
+            background: var(--lily-green);
             bottom: -5%; left: 20%;
             animation-delay: -10s;
             animation-duration: 32s;
         }
         .hero-wash .blob:nth-child(4) {
             width: 260px; height: 260px;
-            background: var(--rose-light);
+            background: var(--rose);
             top: 10%; right: 30%;
             animation-delay: -7s;
-            opacity: 0.12;
+            opacity: 0.18;
         }
         .hero-wash .blob:nth-child(5) {
             width: 300px; height: 220px;
-            background: var(--wheat-gold-light);
+            background: var(--wheat-gold);
             bottom: 15%; right: 5%;
             animation-delay: -12s;
-            opacity: 0.1;
+            opacity: 0.15;
         }
 
         @keyframes drift {
@@ -1344,7 +1344,7 @@
                 display: none;
                 position: fixed;
                 top: 72px; left: 0; right: 0; bottom: 0;
-                background: rgba(240, 232, 218, 0.98);
+                background: rgba(232, 220, 202, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
                 align-items: center;
