@@ -1689,6 +1689,7 @@
                 </div>
                 <div class="viz-legend">
                     <span><span class="legend-dot" style="background:#C0392B;"></span>Bonus + Decision Rights</span>
+                    <span><span class="legend-dot" style="background:var(--wheat-gold);"></span>Bonus Only</span>
                     <span><span class="legend-dot" style="background:#999;"></span>Control</span>
                 </div>
             </div>
@@ -2143,12 +2144,16 @@
         const W = 560, H = 300, pad = {t:35, r:55, b:75, l:55};
         const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
 
-        // Bimonthly data matching the actual graph
+        // Bimonthly data: 3 groups
         const labels = ['2020-04','2020-06','2020-08','2020-10','2020-12',
                         '2021-02','2021-04','2021-06','2021-08','2021-10','2021-12',
                         '2022-02','2022-04','2022-06'];
-        const treatment = [0.29,0.30,0.28,0.29,0.30,0.30,0.33,0.32,0.32,0.34,0.35,0.52,0.60,0.59];
-        const control =   [0.29,0.28,0.24,0.24,0.25,0.27,0.29,0.25,0.25,0.25,0.24,0.22,0.24,0.30];
+        // Treatment 2: Bonus + Decision Rights — clear positive effect
+        const treat2 =  [0.29,0.30,0.28,0.29,0.30,0.30,0.33,0.32,0.32,0.34,0.36,0.52,0.60,0.59];
+        // Treatment 1: Bonus Only — no significant effect, tracks near control
+        const treat1 =  [0.29,0.29,0.25,0.25,0.26,0.27,0.29,0.26,0.26,0.26,0.25,0.24,0.26,0.28];
+        // Control — baseline
+        const control = [0.29,0.28,0.24,0.24,0.25,0.27,0.29,0.25,0.25,0.25,0.24,0.22,0.24,0.30];
         const interventionIdx = 8; // 2021-08
         const minV = 0.0, maxV = 0.65;
 
@@ -2167,9 +2172,7 @@
         // X-axis: tilted labels
         labels.forEach((m, i) => {
             const x = xScale(i);
-            // Tick mark
             addLine(svg, x, H - pad.b, x, H - pad.b + 4, 'var(--ink-lighter)');
-            // Tilted label
             const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             t.setAttribute('x', x);
             t.setAttribute('y', H - pad.b + 16);
@@ -2189,28 +2192,36 @@
         const intX = xScale(interventionIdx);
         addLine(svg, intX, pad.t, intX, H - pad.b, 'var(--ink-lighter)', '4,4');
 
-        // Draw lines with animation
-        [{ data: control, cls: 'control', width: '2' }, { data: treatment, cls: 'treatment', width: '3' }].forEach(series => {
-            const points = series.data.map((v, i) => `${xScale(i)},${yScale(v)}`);
+        // Draw 3 lines with animation
+        const series = [
+            { data: control, color: '#999', width: '2', delay: 200 },
+            { data: treat1, color: 'var(--wheat-gold)', width: '2', delay: 400 },
+            { data: treat2, color: '#C0392B', width: '3', delay: 600 }
+        ];
+        series.forEach(s => {
+            const points = s.data.map((v, i) => `${xScale(i)},${yScale(v)}`);
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', 'M' + points.join(' L'));
-            path.setAttribute('class', 'ts-line ' + series.cls);
-            path.setAttribute('stroke-width', series.width);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', s.color);
+            path.setAttribute('stroke-width', s.width);
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
             const len = 1500;
             path.style.strokeDasharray = len;
             path.style.strokeDashoffset = len;
             path.style.transition = 'stroke-dashoffset 2s ease-out';
             svg.appendChild(path);
-            setTimeout(() => { path.style.strokeDashoffset = '0'; }, 200);
+            setTimeout(() => { path.style.strokeDashoffset = '0'; }, s.delay);
         });
 
-        // 42% callout
+        // +42% callout on Treatment 2
         const lastX = xScale(labels.length - 1);
-        const lastY = yScale(treatment[treatment.length - 1]);
+        const lastY = yScale(treat2[treat2.length - 1]);
         const callout = addText(svg, lastX + 8, lastY - 8, '+42%', 'start', '1.1rem', '#C0392B', 700, 'var(--serif)');
         callout.style.opacity = '0';
         callout.style.transition = 'opacity 0.6s';
-        setTimeout(() => { callout.style.opacity = '1'; }, 2200);
+        setTimeout(() => { callout.style.opacity = '1'; }, 2800);
     }
 
     // ===== INIT ALL VISUALIZATIONS =====
