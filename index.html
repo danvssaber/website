@@ -148,7 +148,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 72px;
+            height: 100px;
         }
 
         .nav-logo {
@@ -157,9 +157,9 @@
             align-items: center;
         }
         .nav-logo-img {
-            height: 72px;
-            width: 72px;
-            border-radius: 14px;
+            height: 90px;
+            width: 90px;
+            border-radius: 16px;
             object-fit: cover;
             transition: opacity 0.3s;
         }
@@ -221,7 +221,7 @@
         .mobile-toggle.open span:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
 
         /* ===== PAGE SECTIONS ===== */
-        .page { display: none; min-height: calc(100vh - 72px); padding-top: 72px; }
+        .page { display: none; min-height: calc(100vh - 100px); padding-top: 100px; }
         .page.active { display: block; animation: fadeIn 0.6s var(--transition); }
 
         @keyframes fadeIn {
@@ -1387,7 +1387,7 @@
             .nav-links {
                 display: none;
                 position: fixed;
-                top: 72px; left: 0; right: 0; bottom: 0;
+                top: 100px; left: 0; right: 0; bottom: 0;
                 background: rgba(232, 220, 202, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
@@ -2139,49 +2139,64 @@
     function drawBonusChart() {
         const svg = document.getElementById('bonus-chart');
         svg.innerHTML = '';
-        const W = 520, H = 260, pad = {t:35, r:50, b:45, l:55};
+        svg.setAttribute('viewBox', '0 0 560 300');
+        const W = 560, H = 300, pad = {t:35, r:55, b:75, l:55};
         const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
 
-        // Simulated data: pre-intervention both ~0.28, post: treatment rises to ~0.58, control stays ~0.24
-        const months = ['2020m4','','2020m8','','2020m12','','2021m4','2021m6','','2021m10','','2022m2','','2022m6'];
-        const treatment = [0.28,0.29,0.30,0.29,0.31,0.30,0.32,0.33,0.38,0.42,0.48,0.52,0.56,0.58];
-        const control =   [0.28,0.29,0.28,0.29,0.28,0.28,0.27,0.28,0.27,0.26,0.25,0.24,0.24,0.24];
-        const interventionIdx = 7; // 2021m6
-        const minV = 0.1, maxV = 0.65;
+        // Bimonthly data matching the actual graph
+        const labels = ['2020-04','2020-06','2020-08','2020-10','2020-12',
+                        '2021-02','2021-04','2021-06','2021-08','2021-10','2021-12',
+                        '2022-02','2022-04','2022-06'];
+        const treatment = [0.29,0.30,0.28,0.29,0.30,0.30,0.33,0.32,0.32,0.34,0.35,0.52,0.60,0.59];
+        const control =   [0.29,0.28,0.24,0.24,0.25,0.27,0.29,0.25,0.25,0.25,0.24,0.22,0.24,0.30];
+        const interventionIdx = 8; // 2021-08
+        const minV = 0.0, maxV = 0.65;
 
-        addText(svg, W/2, 16, 'On-Time Payment %', 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
+        const yScale = v => pad.t + ((maxV - v) / (maxV - minV)) * cH;
+        const xScale = i => pad.l + (i / (labels.length - 1)) * cW;
 
-        // Y-axis
-        for (let v = 0.1; v <= 0.6; v += 0.1) {
-            const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
-            addLine(svg, pad.l, y, W - pad.r, y, 'rgba(0,0,0,0.05)');
-            addText(svg, pad.l - 8, y + 4, v.toFixed(1), 'end', '0.65rem', 'var(--ink-lighter)');
+        addText(svg, W/2, 16, 'On-Time Payment %', 'middle', '0.9rem', 'var(--ink)', 600, 'var(--serif)');
+
+        // Y-axis gridlines and labels
+        for (let v = 0.0; v <= 0.6; v += 0.1) {
+            const y = yScale(v);
+            addLine(svg, pad.l, y, W - pad.r, y, 'rgba(0,0,0,0.06)');
+            addText(svg, pad.l - 10, y + 4, v.toFixed(1), 'end', '0.65rem', 'var(--ink-lighter)');
         }
 
-        // X-axis labels
-        months.forEach((m, i) => {
-            if (m) {
-                const x = pad.l + (i / (months.length - 1)) * cW;
-                addText(svg, x, H - 8, m, 'middle', '0.55rem', 'var(--ink-lighter)');
-            }
+        // X-axis: tilted labels
+        labels.forEach((m, i) => {
+            const x = xScale(i);
+            // Tick mark
+            addLine(svg, x, H - pad.b, x, H - pad.b + 4, 'var(--ink-lighter)');
+            // Tilted label
+            const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            t.setAttribute('x', x);
+            t.setAttribute('y', H - pad.b + 16);
+            t.setAttribute('text-anchor', 'end');
+            t.setAttribute('font-size', '0.58rem');
+            t.setAttribute('fill', 'var(--ink-lighter)');
+            t.setAttribute('font-family', 'var(--serif)');
+            t.setAttribute('transform', `rotate(-40, ${x}, ${H - pad.b + 16})`);
+            t.textContent = m;
+            svg.appendChild(t);
         });
 
-        // Intervention line
-        const intX = pad.l + (interventionIdx / (months.length - 1)) * cW;
+        // X-axis line
+        addLine(svg, pad.l, H - pad.b, W - pad.r, H - pad.b, 'rgba(0,0,0,0.15)');
+
+        // Intervention dashed line at 2021-08
+        const intX = xScale(interventionIdx);
         addLine(svg, intX, pad.t, intX, H - pad.b, 'var(--ink-lighter)', '4,4');
-        addText(svg, intX, pad.t - 6, 'Intervention', 'middle', '0.68rem', 'var(--ink-lighter)', 500);
 
         // Draw lines with animation
-        [{ data: control, cls: 'control' }, { data: treatment, cls: 'treatment' }].forEach(series => {
-            const points = series.data.map((v, i) => {
-                const x = pad.l + (i / (months.length - 1)) * cW;
-                const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
-                return `${x},${y}`;
-            });
+        [{ data: control, cls: 'control', width: '2' }, { data: treatment, cls: 'treatment', width: '3' }].forEach(series => {
+            const points = series.data.map((v, i) => `${xScale(i)},${yScale(v)}`);
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', 'M' + points.join(' L'));
             path.setAttribute('class', 'ts-line ' + series.cls);
-            const len = 1200;
+            path.setAttribute('stroke-width', series.width);
+            const len = 1500;
             path.style.strokeDasharray = len;
             path.style.strokeDashoffset = len;
             path.style.transition = 'stroke-dashoffset 2s ease-out';
@@ -2190,9 +2205,9 @@
         });
 
         // 42% callout
-        const lastTX = pad.l + ((months.length - 1) / (months.length - 1)) * cW;
-        const lastTY = pad.t + ((maxV - treatment[treatment.length - 1]) / (maxV - minV)) * cH;
-        const callout = addText(svg, lastTX + 8, lastTY - 8, '+42%', 'start', '1.1rem', '#C0392B', 700, 'var(--serif)');
+        const lastX = xScale(labels.length - 1);
+        const lastY = yScale(treatment[treatment.length - 1]);
+        const callout = addText(svg, lastX + 8, lastY - 8, '+42%', 'start', '1.1rem', '#C0392B', 700, 'var(--serif)');
         callout.style.opacity = '0';
         callout.style.transition = 'opacity 0.6s';
         setTimeout(() => { callout.style.opacity = '1'; }, 2200);
