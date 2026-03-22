@@ -762,26 +762,405 @@
         }
         .paper-figure:hover .expand-hint { opacity: 1; }
 
-        /* Publication card */
-        .pub-card {
+        /* ===== INTERACTIVE VISUALIZATIONS ===== */
+
+        /* Shared viz container */
+        .viz-container {
+            margin-top: 20px;
             background: var(--parchment);
-            border-radius: 4px;
-            padding: 28px 36px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(59, 94, 71, 0.08);
-            box-shadow: 0 2px 12px var(--shadow-soft);
-            transition: all 0.3s var(--transition);
-        }
-        .pub-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px var(--shadow-soft);
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
         }
 
-        .pub-citation {
-            font-size: 0.95rem;
-            color: var(--ink-light);
-            line-height: 1.7;
+        /* Tab buttons */
+        .viz-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
+        .viz-tab {
+            font-family: var(--sans);
+            font-size: 0.76rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(43, 69, 112, 0.15);
+            background: transparent;
+            color: var(--ink-light);
+            cursor: pointer;
+            transition: all 0.3s var(--transition);
+        }
+        .viz-tab:hover { border-color: var(--starry-blue-light); color: var(--starry-blue); }
+        .viz-tab.active {
+            background: var(--starry-blue);
+            color: var(--canvas);
+            border-color: var(--starry-blue);
+        }
+
+        /* SVG chart area */
+        .viz-chart {
+            width: 100%;
+            overflow: visible;
+        }
+        .viz-chart text {
+            font-family: var(--sans);
+        }
+        .chart-line {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .chart-line.voluntary { stroke: var(--starry-blue); }
+        .chart-line.involuntary { stroke: var(--sienna); }
+        .chart-dot {
+            r: 5;
+            stroke-width: 2;
+            stroke: var(--parchment);
+            cursor: pointer;
+            transition: r 0.2s;
+        }
+        .chart-dot:hover { r: 7; }
+        .chart-dot.voluntary { fill: var(--starry-blue); }
+        .chart-dot.involuntary { fill: var(--sienna); }
+
+        /* Tooltip */
+        .viz-tooltip {
+            position: absolute;
+            background: var(--ink);
+            color: var(--canvas);
+            font-size: 0.78rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            white-space: nowrap;
+            font-family: var(--mono);
+        }
+
+        /* Chart legend */
+        .viz-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 12px;
+            font-size: 0.78rem;
+            color: var(--ink-light);
+        }
+        .viz-legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .legend-dot.vol { background: var(--starry-blue); }
+        .legend-dot.invol { background: var(--sienna); }
+
+        /* Bar chart for survey */
+        .viz-bar-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+        }
+
+        /* Paper 2: Experimental design */
+        .exp-design {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 20px;
+            padding: 24px;
+            background: var(--parchment);
+            border-radius: 8px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
+        }
+        .exp-arms {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .exp-arm {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .exp-arm-title {
+            font-family: var(--serif);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+        .exp-arm-subtitle {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--ink-lighter);
+            margin-bottom: 16px;
+        }
+        .exp-cells {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .exp-cell {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(43, 69, 112, 0.12);
+            background: rgba(43, 69, 112, 0.03);
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--ink-light);
+            cursor: default;
+            transition: all 0.4s var(--transition);
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        .exp-cell.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .exp-cell .cell-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+        .exp-cross {
+            font-size: 2rem;
+            color: var(--starry-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+            padding-top: 30px;
+        }
+        .exp-cross.visible { opacity: 1; }
+        .exp-branch {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .exp-branch-line {
+            width: 2px;
+            background: linear-gradient(180deg, var(--lavender), var(--water-blue));
+            border-radius: 1px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .exp-branch-line.visible { opacity: 1; }
+
+        /* Paper 3: Team formation */
+        .team-viz {
+            margin-top: 20px;
+            padding: 24px;
+            background: var(--parchment);
+            border-radius: 8px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
+            position: relative;
+            min-height: 260px;
+        }
+        .team-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .dept-box {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.6s var(--transition);
+            border: 1px solid;
+        }
+        .dept-box.tech { background: rgba(110, 143, 173, 0.1); border-color: rgba(110, 143, 173, 0.25); color: var(--water-blue); }
+        .dept-box.craft { background: rgba(142, 123, 166, 0.1); border-color: rgba(142, 123, 166, 0.25); color: var(--lavender); }
+        .dept-box.mfg { background: rgba(123, 158, 135, 0.1); border-color: rgba(123, 158, 135, 0.25); color: var(--lily-green); }
+        .team-arrow {
+            font-size: 1.2rem;
+            color: var(--ink-lighter);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .team-arrow.visible { opacity: 1; }
+        .cft-box {
+            padding: 16px 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(43, 69, 112, 0.08), rgba(142, 123, 166, 0.08));
+            border: 2px dashed rgba(43, 69, 112, 0.2);
+            text-align: center;
+            font-family: var(--serif);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--starry-blue);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s var(--transition);
+        }
+        .cft-box.visible { opacity: 1; transform: scale(1); }
+        .incentive-labels {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 16px;
+        }
+        .incentive-label {
+            font-size: 0.78rem;
+            font-family: var(--serif);
+            font-style: italic;
+            padding: 6px 14px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: all 0.5s;
+        }
+        .incentive-label.visible { opacity: 1; }
+        .incentive-label.explicit {
+            background: rgba(212, 168, 67, 0.12);
+            color: var(--sienna);
+        }
+        .incentive-label.implicit {
+            background: rgba(43, 69, 112, 0.08);
+            color: var(--starry-blue);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .incentive-label.pulse { animation: pulse 2s ease-in-out infinite; }
+
+        /* Paper 4: Interactive report */
+        .report-demo {
+            margin-top: 20px;
+            padding: 24px;
+            background: var(--parchment);
+            border-radius: 8px;
+            border: 1px solid rgba(142, 123, 166, 0.08);
+        }
+        .report-demo-inner {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .report-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            min-width: 240px;
+            flex: 1;
+            max-width: 320px;
+            box-shadow: 0 2px 12px var(--shadow-soft);
+            border: 1px solid rgba(142, 123, 166, 0.08);
+        }
+        .report-card h4 {
+            font-family: var(--serif);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.3s var(--transition);
+            font-size: 0.82rem;
+            color: var(--ink-light);
+            border: 1px solid transparent;
+        }
+        .metric-row:hover { background: rgba(43, 69, 112, 0.04); }
+        .metric-row.active {
+            background: rgba(43, 69, 112, 0.06);
+            border-color: rgba(43, 69, 112, 0.12);
+            color: var(--ink);
+        }
+        .metric-toggle {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid var(--ink-lighter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .metric-row.active .metric-toggle {
+            background: var(--starry-blue);
+            border-color: var(--starry-blue);
+            color: white;
+        }
+        .overload-indicator {
+            text-align: center;
+            margin-top: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all 0.4s var(--transition);
+        }
+        .overload-indicator.overloaded {
+            background: rgba(196, 137, 138, 0.15);
+            color: var(--rose);
+        }
+        .overload-indicator.moderate {
+            background: rgba(212, 168, 67, 0.15);
+            color: var(--sienna);
+        }
+        .overload-indicator.focused {
+            background: rgba(123, 158, 135, 0.15);
+            color: var(--cypress);
+        }
+        .report-instruction {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--ink-lighter);
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+
+        /* Paper 5: Animated time series */
+        .ts-chart {
+            width: 100%;
+            overflow: visible;
+        }
+        .ts-line {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+        .ts-line.treatment { stroke: #C0392B; }
+        .ts-line.control { stroke: #999; }
+        .ts-callout {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            fill: #C0392B;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .ts-callout.visible { opacity: 1; }
         .pub-citation .journal {
             font-style: italic;
             color: var(--ink);
@@ -1085,9 +1464,21 @@
             <div class="paper-abstract">
                 <p>This study examines voluntary, employee-initiated lateral moves as a mechanism for improving employee-job match quality. Using 11-year personnel data from an S&amp;P 500 company, I find that employees undertaking such moves are associated with significantly higher long-term promotion rates, lower turnover, and improved performance ratings compared to matched employees who remain in their roles. Conversely, involuntary, firm-dictated lateral moves fail to generate these benefits, suggesting that voluntary moves enable employees and local managers to exploit private information for optimal job matching. The benefits of voluntary moves are particularly pronounced for employees facing high information asymmetry with their jobs, limited promotion opportunities, or substantial changes in job contents. However, lateral moves entail short-term transition costs, including temporary performance declines, reduced role clarity, and potential misfit with the new job. This research contributes to the accounting and economics literature by highlighting a dynamic, post-hire mechanism for improving employee-job match quality. The findings demonstrate the strategic value of lateral mobility in workforce optimization, particularly relevant for flat organizational structures and periods of hiring constraints when firms must maximize the productivity of existing employees rather than rely on external recruitment.</p>
             </div>
-            <div class="paper-figure">
-                <img src="website/lateral_promotion.png" alt="Promotion probability by move type" onclick="openLightbox(this)">
-                <p class="expand-hint">click to expand</p>
+            <div class="viz-container" id="jmp-viz">
+                <div class="viz-tabs">
+                    <button class="viz-tab active" onclick="switchJmpTab('promotion')">Promotion</button>
+                    <button class="viz-tab" onclick="switchJmpTab('turnover')">Turnover</button>
+                    <button class="viz-tab" onclick="switchJmpTab('performance')">Performance</button>
+                    <button class="viz-tab" onclick="switchJmpTab('survey')">Survey</button>
+                </div>
+                <div style="position:relative;">
+                    <svg class="viz-chart" id="jmp-chart" viewBox="0 0 520 280"></svg>
+                    <div class="viz-tooltip" id="jmp-tooltip"></div>
+                </div>
+                <div class="viz-legend">
+                    <span><span class="legend-dot vol"></span>Voluntary Moves</span>
+                    <span><span class="legend-dot invol"></span>Involuntary Moves</span>
+                </div>
             </div>
         </div>
 
@@ -1106,9 +1497,34 @@
             <div class="paper-abstract">
                 <p>A growing literature in accounting and economics explores information provision as a driver of behaviors that benefit society. We present a Registration-based Editorial Process (REP) proposal of a field experiment in a public health setting to examine whether the provision of information on private benefits, social benefits, or both best motivates prosocial behavior. Although information on private and social benefits can each influence social responsibility, theories of limited attention and information processing suggest that providing both types of information together may not be best. In light of accounting research on the use of images to alleviate information processing constraints, we also examine whether images moderate the effect of our textual information interventions. Our REP proposal is a randomized controlled trial in collaboration with the government of El Salvador to prompt vaccination uptake. The empirical design extends the accounting literature on the role of information content and formatting to increase prosocial behavior.</p>
             </div>
-            <div class="paper-figure">
-                <img src="website/salvador.png" alt="Experimental design — treatment arms" onclick="openLightbox(this)">
-                <p class="expand-hint">click to expand</p>
+            <div class="exp-design" id="exp-design-viz">
+                <div class="exp-arms">
+                    <div class="exp-arm">
+                        <div class="exp-arm-title">Treatment Arm 1</div>
+                        <div class="exp-arm-subtitle">Information Provision</div>
+                        <div class="exp-cells" id="exp-arm1">
+                            <div class="exp-cell"><div class="cell-icon">🛡️</div>Private Benefits</div>
+                            <div class="exp-cell"><div class="cell-icon">🤝</div>Social Benefits</div>
+                            <div class="exp-cell"><div class="cell-icon">🛡️🤝</div>Private &amp; Social</div>
+                        </div>
+                    </div>
+                    <div class="exp-cross" id="exp-cross">&#10005;</div>
+                    <div class="exp-arm">
+                        <div class="exp-arm-title">Treatment Arm 2</div>
+                        <div class="exp-arm-subtitle">Visual Information</div>
+                        <div class="exp-cells" id="exp-arm2">
+                            <div class="exp-cell"><div class="cell-icon">📝</div>Text Only</div>
+                            <div class="exp-cell">
+                                <div class="cell-icon">📝🖼️</div>Text &amp; Visual
+                                <div style="display:flex;gap:8px;margin-top:8px;justify-content:center;">
+                                    <span style="padding:4px 10px;border-radius:12px;background:rgba(43,69,112,0.08);font-size:0.75rem;">🩺 Authority</span>
+                                    <span style="padding:4px 10px;border-radius:12px;background:rgba(123,158,135,0.08);font-size:0.75rem;">👨‍👩‍👧 Beneficiary</span>
+                                    <span style="padding:4px 10px;border-radius:12px;background:rgba(142,123,166,0.08);font-size:0.75rem;">🩺👨‍👩‍👧 Both</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1126,9 +1542,22 @@
             <div class="paper-abstract">
                 <p>This study examines how participation in temporary cross-functional teams affects employees' performance in their primary departmental responsibilities. Employees in these teams juggle dual responsibilities that often conflict, balancing explicitly incentivized departmental tasks against implicitly rewarded team objectives. Using a staggered difference-in-differences design with field data from a large manufacturing firm, I find that employees' routine task performance significantly deteriorates during cross-functional team assignments. This performance decline is attenuated for employees with greater cognitive capacity and stronger career concerns, with performance gradually recovering as employees adapt. While individual employees make more mistakes during team participation, they are more likely to achieve higher professional and vocational certifications post-assignment. At the firm level, despite an increase in errors, the firm experiences greater operational efficiency and stability after implementing such teams. These findings extend multitasking theories and offer insights for organizations balancing innovation with effective performance management.</p>
             </div>
-            <div class="paper-figure">
-                <img src="website/CFT.png" alt="Cross-functional team structure" onclick="openLightbox(this)">
-                <p class="expand-hint">click to expand</p>
+            <div class="team-viz" id="team-viz">
+                <div class="team-row" style="margin-bottom:20px;">
+                    <div class="dept-box tech">🔧 Technology</div>
+                    <div class="dept-box craft">🎨 Crafts</div>
+                    <div class="dept-box mfg">🏭 Manufacturing</div>
+                </div>
+                <div class="team-row" style="margin-bottom:16px;">
+                    <div class="team-arrow" id="team-arrows">↓ &nbsp; ↓ &nbsp; ↓</div>
+                </div>
+                <div class="team-row" style="margin-bottom:20px;">
+                    <div class="cft-box" id="cft-box">Cross-Functional Team<br><span style="font-family:var(--sans);font-size:0.78rem;font-weight:400;color:var(--ink-light);">for innovation</span></div>
+                </div>
+                <div class="incentive-labels">
+                    <div class="incentive-label explicit" id="label-explicit">Explicit Incentives<br><span style="font-size:0.7rem;">departmental KPIs</span></div>
+                    <div class="incentive-label implicit" id="label-implicit">Implicit Incentives<br><span style="font-size:0.7rem;">team innovation goals</span></div>
+                </div>
             </div>
         </div>
 
@@ -1143,9 +1572,46 @@
             <div class="paper-abstract">
                 <p>Recent empirical research has documented that overprovision of information harms performance. Yet, evidence on how to design performance reports in a way that accounts for the limited cognitive capacity of the user is still scant. Using a field experiment in online professional education, we test whether delegating decision rights over performance measures to report recipients improves their performance. Our analysis yields the following observations. First, recipients perform better when we restrict reports to a subset of information, rather than providing that same information in a more comprehensive report. Second, recipients granted decision rights over performance measures exhibit better performance than those without such rights. Third, when granted decision rights, recipients frequently select reports containing only a subset of available information&mdash;a choice that would be suboptimal from a Bayesian decision-maker's perspective despite all information being freely accessible. In addition, the positive effect of delegation is more pronounced among recipients who are more susceptible to information overload. These results suggest that recipients wield the choice over their report design in a manner that mitigates, rather than exacerbates, information overload. Our study offers initial evidence on the benefits of user-driven customization of performance reports.</p>
             </div>
-            <div class="paper-figure">
-                <img src="website/choose to know less.png" alt="Report customization — delegate to choose" onclick="openLightbox(this)">
-                <p class="expand-hint">click to expand</p>
+            <div class="report-demo" id="report-demo">
+                <p class="report-instruction">Click metrics to toggle them on/off — experience the paper's core insight</p>
+                <div class="report-demo-inner">
+                    <div class="report-card">
+                        <h4>Performance Report</h4>
+                        <div id="metric-list">
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>📊 Completion Rate</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>⏱️ Time on Task</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>📈 Quiz Score</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>🔄 Retry Count</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>📅 Login Frequency</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>💬 Forum Posts</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                            <div class="metric-row active" onclick="toggleMetric(this)">
+                                <span>🏆 Peer Ranking</span>
+                                <div class="metric-toggle">✓</div>
+                            </div>
+                        </div>
+                        <div class="overload-indicator overloaded" id="overload-indicator">
+                            ⚠️ Information Overload — 7 metrics active
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1160,30 +1626,15 @@
             <div class="paper-abstract">
                 <p>In firms using high-powered commission schemes, the primary constraint on performance is often not effort, but operational friction and coordination bottlenecks. We investigate whether delegating partner selection rights serves as a more effective control mechanism than marginal increases in financial rewards in such settings. We conducted a large-scale field experiment at a home decoration firm involving 63 stores and 20,569 projects, where we randomly assigned stores to a Control group, a Bonus Only group, or a Bonus and Decision Rights group. We focus on customer referrals as our primary outcome because these high-value transactions depend critically on seamless dyadic coordination. We find that financial incentives alone fail to generate statistically significant gains in referral sales. In contrast, combining the incentive with decision rights generates a 42% relative increase. Mechanism tests reveal that delegation functions as a structural efficiency lever: agents use specific knowledge to sort into more compatible teams, thereby reducing project cycle times and increasing customer satisfaction. Finally, we document a &ldquo;state-contingent&rdquo; value to decentralization. The performance premium of decision rights is concentrated in periods of high operational load, precisely when the central allocator becomes a binding bottleneck. These findings demonstrate that in capacity-constrained environments, decision rights are a critical complement to financial incentives.</p>
             </div>
-            <div class="paper-figure">
-                <img src="website/home_furniture_treatment.png" alt="Treatment effect of delegating partner selection rights" onclick="openLightbox(this)">
-                <p class="expand-hint">click to expand</p>
-            </div>
-        </div>
-
-        <!-- PUBLICATIONS -->
-        <div class="section-label">
-            Publications
-        </div>
-
-        <div class="pub-card reveal">
-            <h3 class="paper-title">When Do Transnational Institutions Matter for Multinational Corporations' Location Choices?</h3>
-            <p class="paper-authors">with Christine M. Chan and Lei Shi</p>
-            <button class="abstract-toggle" onclick="toggleAbstract(this)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                Abstract
-            </button>
-            <div class="paper-abstract">
-                <p>This study investigates how international agreements (BITs and PTAs) influence where multinational corporations choose to invest. While previous research focused on domestic institutions, we examine how these international agreements interact with host country uncertainty, home country institutional weaknesses, and companies' existing international presence. Analyzing over 13,000 market entries by 1,129 multinational companies across 73 countries (2005&ndash;2017), we found these agreements significantly increase investment likelihood. This effect is stronger when host countries have uncertain institutions or when companies come from countries with weak formal institutions, but weaker for highly internationalized companies. Our findings enhance institutional theory by showing how international agreements interact with various institutional factors, providing practical insights for multinational managers and policymakers navigating complex global environments.</p>
-            </div>
-            <div class="paper-figure">
-                <img src="website/MNC_simple.png" alt="MNC market entry probability" onclick="openLightbox(this)" style="max-height: 220px;">
-                <p class="expand-hint">click to expand</p>
+            <div class="viz-container" id="bonus-viz">
+                <div style="position:relative;">
+                    <svg class="ts-chart" id="bonus-chart" viewBox="0 0 520 260"></svg>
+                    <div class="viz-tooltip" id="bonus-tooltip"></div>
+                </div>
+                <div class="viz-legend">
+                    <span><span class="legend-dot" style="background:#C0392B;"></span>Bonus + Decision Rights</span>
+                    <span><span class="legend-dot" style="background:#999;"></span>Control</span>
+                </div>
             </div>
         </div>
 
@@ -1273,8 +1724,372 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
+    // ===== PAPER 1: JMP Interactive Chart =====
+    const jmpData = {
+        promotion: {
+            title: 'Promotion Probability',
+            vol:  [-0.019, 0.025, 0.024, 0.023],
+            invol:[-0.036, 0.000, 0.011, 0.010],
+            sigV: ['***','***','***','**'],
+            sigI: ['***','','','']
+        },
+        turnover: {
+            title: 'Turnover Rate',
+            vol:  [-0.030, -0.014, 0.005, -0.015],
+            invol:[-0.003, 0.006, -0.000, 0.037],
+            sigV: ['***','***','',''],
+            sigI: ['','','','']
+        },
+        performance: {
+            title: 'Performance Ratings',
+            vol:  [-0.049, 0.001, 0.011, 0.049],
+            invol:[-0.087, -0.024, -0.008, -0.022],
+            sigV: ['***','','','**'],
+            sigI: ['***','','','']
+        },
+        survey: {
+            title: 'Perceptions Change (Year 1)',
+            labels: ['Empowerment','Inclusion','Supervisor\nSupport','Team\nDynamics','Job\nResources','Engagement','Link\nStrategy','Top\nComm.','Career\nInspiration','Know\nExpect.'],
+            vol:  [0.142, 0.112, 0.066, 0.073, 0.042, 0.051, 0.113, 0.070, 0.042, -0.046],
+            invol:[0.034, -0.002, 0.004, -0.036, -0.039, -0.154, -0.104, -0.053, -0.039, -0.015],
+            sigV: ['***','***','***','***','**','***','***','***','**','***'],
+            sigI: ['','','','','','***','','','','']
+        }
+    };
+
+    let currentJmpTab = 'promotion';
+
+    function switchJmpTab(tab) {
+        currentJmpTab = tab;
+        document.querySelectorAll('#jmp-viz .viz-tab').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        drawJmpChart(tab);
+    }
+
+    function drawJmpChart(tab) {
+        const svg = document.getElementById('jmp-chart');
+        const d = jmpData[tab];
+        svg.innerHTML = '';
+
+        if (tab === 'survey') {
+            drawBarChart(svg, d);
+        } else {
+            drawLineChart(svg, d);
+        }
+    }
+
+    function drawLineChart(svg, d) {
+        const W = 520, H = 280, pad = {t:40, r:30, b:50, l:60};
+        const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+        const allVals = d.vol.concat(d.invol);
+        let minV = Math.min(...allVals), maxV = Math.max(...allVals);
+        const range = maxV - minV || 0.05;
+        minV -= range * 0.2; maxV += range * 0.25;
+
+        // Title
+        addText(svg, W/2, 18, d.title, 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
+
+        // Axes
+        const xLabels = ['Year 1','Year 2','Year 3','Year 4'];
+        xLabels.forEach((l, i) => {
+            const x = pad.l + (i / 3) * cW;
+            addText(svg, x, H - 12, l, 'middle', '0.72rem', 'var(--ink-lighter)');
+            addLine(svg, x, pad.t, x, H - pad.b, 'rgba(0,0,0,0.05)');
+        });
+
+        // Zero line
+        const zeroY = pad.t + ((maxV - 0) / (maxV - minV)) * cH;
+        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'rgba(0,0,0,0.12)', '2,4');
+        addText(svg, pad.l - 8, zeroY + 4, '0', 'end', '0.68rem', 'var(--ink-lighter)');
+
+        // Y-axis ticks
+        const ticks = 5;
+        for (let i = 0; i <= ticks; i++) {
+            const v = minV + (i / ticks) * (maxV - minV);
+            const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
+            if (Math.abs(v) > 0.001) addText(svg, pad.l - 8, y + 4, v.toFixed(3), 'end', '0.65rem', 'var(--ink-lighter)');
+        }
+
+        // Lines and dots
+        ['vol','invol'].forEach(type => {
+            const vals = d[type];
+            const sig = type === 'vol' ? d.sigV : d.sigI;
+            const cls = type === 'vol' ? 'voluntary' : 'involuntary';
+            const points = vals.map((v, i) => {
+                const x = pad.l + (i / 3) * cW;
+                const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
+                return { x, y, v, s: sig[i] };
+            });
+
+            // Line path
+            const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathD);
+            path.setAttribute('class', 'chart-line ' + cls);
+            const len = path.getTotalLength ? 800 : 800;
+            path.style.strokeDasharray = len;
+            path.style.strokeDashoffset = len;
+            path.style.transition = 'stroke-dashoffset 1.2s ease-out';
+            svg.appendChild(path);
+            setTimeout(() => { path.style.strokeDashoffset = '0'; }, 100);
+
+            // Dots
+            points.forEach((p, i) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', p.x);
+                circle.setAttribute('cy', p.y);
+                circle.setAttribute('class', 'chart-dot ' + cls);
+                circle.style.opacity = '0';
+                circle.style.transition = 'opacity 0.3s';
+                setTimeout(() => { circle.style.opacity = '1'; }, 400 + i * 200);
+                circle.addEventListener('mouseenter', (e) => {
+                    const tooltip = document.getElementById('jmp-tooltip');
+                    tooltip.textContent = `${p.v.toFixed(3)}${p.s}`;
+                    tooltip.style.opacity = '1';
+                    const rect = svg.getBoundingClientRect();
+                    tooltip.style.left = (p.x / 520 * rect.width - 20) + 'px';
+                    tooltip.style.top = (p.y / 280 * rect.height - 32) + 'px';
+                });
+                circle.addEventListener('mouseleave', () => {
+                    document.getElementById('jmp-tooltip').style.opacity = '0';
+                });
+                svg.appendChild(circle);
+            });
+        });
+    }
+
+    function drawBarChart(svg, d) {
+        const W = 520, H = 280, pad = {t:40, r:10, b:70, l:45};
+        const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+        const n = d.labels.length;
+        const barW = cW / n;
+        const allVals = d.vol.concat(d.invol);
+        let minV = Math.min(...allVals, 0), maxV = Math.max(...allVals, 0);
+        const range = maxV - minV || 0.1;
+        minV -= range * 0.1; maxV += range * 0.15;
+
+        addText(svg, W/2, 18, d.title, 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
+
+        const zeroY = pad.t + ((maxV - 0) / (maxV - minV)) * cH;
+        addLine(svg, pad.l, zeroY, W - pad.r, zeroY, 'rgba(0,0,0,0.15)');
+
+        d.labels.forEach((label, i) => {
+            const cx = pad.l + (i + 0.5) * barW;
+            const bw = barW * 0.32;
+
+            // Voluntary bar
+            const vH = Math.abs(d.vol[i]) / (maxV - minV) * cH;
+            const vY = d.vol[i] >= 0 ? zeroY - vH : zeroY;
+            const vRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            vRect.setAttribute('x', cx - bw - 1); vRect.setAttribute('width', bw);
+            vRect.setAttribute('y', vY); vRect.setAttribute('height', vH);
+            vRect.setAttribute('rx', 2);
+            vRect.setAttribute('fill', 'var(--starry-blue)'); vRect.setAttribute('opacity', '0.85');
+            vRect.style.transition = 'height 0.6s, y 0.6s';
+            svg.appendChild(vRect);
+
+            // Involuntary bar
+            const iH = Math.abs(d.invol[i]) / (maxV - minV) * cH;
+            const iY = d.invol[i] >= 0 ? zeroY - iH : zeroY;
+            const iRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            iRect.setAttribute('x', cx + 1); iRect.setAttribute('width', bw);
+            iRect.setAttribute('y', iY); iRect.setAttribute('height', iH);
+            iRect.setAttribute('rx', 2);
+            iRect.setAttribute('fill', 'var(--sienna)'); iRect.setAttribute('opacity', '0.85');
+            svg.appendChild(iRect);
+
+            // Hover areas
+            [d.vol[i], d.invol[i]].forEach((val, j) => {
+                const rect = j === 0 ? vRect : iRect;
+                const sig = j === 0 ? d.sigV[i] : d.sigI[i];
+                rect.style.cursor = 'pointer';
+                rect.addEventListener('mouseenter', () => {
+                    const tooltip = document.getElementById('jmp-tooltip');
+                    tooltip.textContent = `${val.toFixed(3)}${sig}`;
+                    tooltip.style.opacity = '1';
+                    const svgRect = svg.getBoundingClientRect();
+                    tooltip.style.left = (cx / 520 * svgRect.width - 20) + 'px';
+                    tooltip.style.top = ((j === 0 ? vY : iY) / 280 * svgRect.height - 28) + 'px';
+                });
+                rect.addEventListener('mouseleave', () => {
+                    document.getElementById('jmp-tooltip').style.opacity = '0';
+                });
+            });
+
+            // Labels
+            const lines = label.split('\n');
+            lines.forEach((line, li) => {
+                addText(svg, cx, H - pad.b + 14 + li * 11, line, 'middle', '0.58rem', 'var(--ink-lighter)');
+            });
+        });
+    }
+
+    function addText(svg, x, y, text, anchor, size, fill, weight, family) {
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', x); t.setAttribute('y', y);
+        t.setAttribute('text-anchor', anchor || 'middle');
+        t.setAttribute('font-size', size || '0.75rem');
+        t.setAttribute('fill', fill || 'var(--ink)');
+        if (weight) t.setAttribute('font-weight', weight);
+        if (family) t.setAttribute('font-family', family);
+        t.textContent = text;
+        svg.appendChild(t);
+        return t;
+    }
+
+    function addLine(svg, x1, y1, x2, y2, stroke, dash) {
+        const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+        l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+        l.setAttribute('stroke', stroke || '#ccc');
+        l.setAttribute('stroke-width', '1');
+        if (dash) l.setAttribute('stroke-dasharray', dash);
+        svg.appendChild(l);
+    }
+
+    // ===== PAPER 2: Experimental Design Animation =====
+    function initExpDesign() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const cells1 = document.querySelectorAll('#exp-arm1 .exp-cell');
+                const cells2 = document.querySelectorAll('#exp-arm2 .exp-cell');
+                cells1.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 200));
+                setTimeout(() => document.getElementById('exp-cross').classList.add('visible'), 600);
+                cells2.forEach((c, i) => setTimeout(() => c.classList.add('visible'), 800 + i * 300));
+                obs.unobserve(entry.target);
+            });
+        }, { threshold: 0.3 });
+        const el = document.getElementById('exp-design-viz');
+        if (el) obs.observe(el);
+    }
+
+    // ===== PAPER 3: Team Formation Animation =====
+    function initTeamViz() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                setTimeout(() => document.getElementById('team-arrows').classList.add('visible'), 400);
+                setTimeout(() => document.getElementById('cft-box').classList.add('visible'), 800);
+                setTimeout(() => {
+                    document.getElementById('label-explicit').classList.add('visible', 'pulse');
+                    document.getElementById('label-implicit').classList.add('visible', 'pulse');
+                }, 1200);
+                obs.unobserve(entry.target);
+            });
+        }, { threshold: 0.3 });
+        const el = document.getElementById('team-viz');
+        if (el) obs.observe(el);
+    }
+
+    // ===== PAPER 4: Interactive Report =====
+    function toggleMetric(row) {
+        row.classList.toggle('active');
+        row.querySelector('.metric-toggle').textContent = row.classList.contains('active') ? '✓' : '';
+        updateOverload();
+    }
+
+    function updateOverload() {
+        const active = document.querySelectorAll('#metric-list .metric-row.active').length;
+        const ind = document.getElementById('overload-indicator');
+        if (active >= 6) {
+            ind.className = 'overload-indicator overloaded';
+            ind.textContent = '⚠️ Information Overload — ' + active + ' metrics active';
+        } else if (active >= 4) {
+            ind.className = 'overload-indicator moderate';
+            ind.textContent = '⚡ Moderate Load — ' + active + ' metrics active';
+        } else {
+            ind.className = 'overload-indicator focused';
+            ind.textContent = '✓ Focused Report — ' + active + ' metric' + (active !== 1 ? 's' : '') + ' active';
+        }
+    }
+
+    // ===== PAPER 5: Animated Treatment Effect =====
+    function initBonusChart() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                drawBonusChart();
+                obs.unobserve(entry.target);
+            });
+        }, { threshold: 0.3 });
+        const el = document.getElementById('bonus-viz');
+        if (el) obs.observe(el);
+    }
+
+    function drawBonusChart() {
+        const svg = document.getElementById('bonus-chart');
+        svg.innerHTML = '';
+        const W = 520, H = 260, pad = {t:35, r:50, b:45, l:55};
+        const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+
+        // Simulated data: pre-intervention both ~0.28, post: treatment rises to ~0.58, control stays ~0.24
+        const months = ['2020m4','','2020m8','','2020m12','','2021m4','2021m6','','2021m10','','2022m2','','2022m6'];
+        const treatment = [0.28,0.29,0.30,0.29,0.31,0.30,0.32,0.33,0.38,0.42,0.48,0.52,0.56,0.58];
+        const control =   [0.28,0.29,0.28,0.29,0.28,0.28,0.27,0.28,0.27,0.26,0.25,0.24,0.24,0.24];
+        const interventionIdx = 7; // 2021m6
+        const minV = 0.1, maxV = 0.65;
+
+        addText(svg, W/2, 16, 'On-Time Payment %', 'middle', '0.85rem', 'var(--ink)', 600, 'var(--serif)');
+
+        // Y-axis
+        for (let v = 0.1; v <= 0.6; v += 0.1) {
+            const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
+            addLine(svg, pad.l, y, W - pad.r, y, 'rgba(0,0,0,0.05)');
+            addText(svg, pad.l - 8, y + 4, v.toFixed(1), 'end', '0.65rem', 'var(--ink-lighter)');
+        }
+
+        // X-axis labels
+        months.forEach((m, i) => {
+            if (m) {
+                const x = pad.l + (i / (months.length - 1)) * cW;
+                addText(svg, x, H - 8, m, 'middle', '0.55rem', 'var(--ink-lighter)');
+            }
+        });
+
+        // Intervention line
+        const intX = pad.l + (interventionIdx / (months.length - 1)) * cW;
+        addLine(svg, intX, pad.t, intX, H - pad.b, 'var(--ink-lighter)', '4,4');
+        addText(svg, intX, pad.t - 6, 'Intervention', 'middle', '0.68rem', 'var(--ink-lighter)', 500);
+
+        // Draw lines with animation
+        [{ data: control, cls: 'control' }, { data: treatment, cls: 'treatment' }].forEach(series => {
+            const points = series.data.map((v, i) => {
+                const x = pad.l + (i / (months.length - 1)) * cW;
+                const y = pad.t + ((maxV - v) / (maxV - minV)) * cH;
+                return `${x},${y}`;
+            });
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M' + points.join(' L'));
+            path.setAttribute('class', 'ts-line ' + series.cls);
+            const len = 1200;
+            path.style.strokeDasharray = len;
+            path.style.strokeDashoffset = len;
+            path.style.transition = 'stroke-dashoffset 2s ease-out';
+            svg.appendChild(path);
+            setTimeout(() => { path.style.strokeDashoffset = '0'; }, 200);
+        });
+
+        // 42% callout
+        const lastTX = pad.l + ((months.length - 1) / (months.length - 1)) * cW;
+        const lastTY = pad.t + ((maxV - treatment[treatment.length - 1]) / (maxV - minV)) * cH;
+        const callout = addText(svg, lastTX + 8, lastTY - 8, '+42%', 'start', '1.1rem', '#C0392B', 700, 'var(--serif)');
+        callout.style.opacity = '0';
+        callout.style.transition = 'opacity 0.6s';
+        setTimeout(() => { callout.style.opacity = '1'; }, 2200);
+    }
+
+    // ===== INIT ALL VISUALIZATIONS =====
+    function initViz() {
+        drawJmpChart('promotion');
+        initExpDesign();
+        initTeamViz();
+        initBonusChart();
+    }
+
     // Init
     initReveal();
+    initViz();
 </script>
 
 </body>
